@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+@theme {
+  /* Cozy hearth palette — 暖木色为主 */
+  --color-hearth-bg: #1a1410;
+  --color-hearth-bg-2: #221a14;
+  --color-hearth-wall: #3a2a20;
+  --color-hearth-floor: #4a3528;
+  --color-hearth-warm: #f4a85d;
+  --color-hearth-warm-soft: #d88e4a;
+  --color-hearth-glow: #ffd8a0;
+  --color-hearth-cool: #6b7a9b;
+  --color-hearth-dust: #8a8377;
+  --color-hearth-paper: #f1e7d3;
+  --color-hearth-text: #e8dcc4;
+  --color-hearth-text-soft: #b8a98a;
+  --color-hearth-text-mute: #756954;
+
+  --font-sans: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --font-pixel: "Press Start 2P", "VT323", ui-monospace, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-hearth-bg);
+  color: var(--color-hearth-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+/* 像素清晰渲染 */
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: -moz-crisp-edges;
+  image-rendering: crisp-edges;
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-hearth-wall);
+  border-radius: 4px;
+}
+
+/* 隐藏默认 focus outline，改用自定义 */
+:focus-visible {
+  outline: 2px solid var(--color-hearth-warm);
+  outline-offset: 2px;
+}
+button:focus-visible {
+  outline: none;
+}

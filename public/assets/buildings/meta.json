@@ -1,0 +1,258 @@
+{
+  "facade-0.png": {
+    "width": 98,
+    "height": 296,
+    "cell": [
+      0,
+      0
+    ]
+  },
+  "facade-1.png": {
+    "width": 113,
+    "height": 310,
+    "cell": [
+      1,
+      0
+    ]
+  },
+  "facade-2.png": {
+    "width": 113,
+    "height": 293,
+    "cell": [
+      2,
+      0
+    ]
+  },
+  "facade-3.png": {
+    "width": 113,
+    "height": 303,
+    "cell": [
+      3,
+      0
+    ]
+  },
+  "facade-4.png": {
+    "width": 113,
+    "height": 311,
+    "cell": [
+      4,
+      0
+    ]
+  },
+  "facade-5.png": {
+    "width": 113,
+    "height": 300,
+    "cell": [
+      5,
+      0
+    ]
+  },
+  "facade-6.png": {
+    "width": 113,
+    "height": 302,
+    "cell": [
+      6,
+      0
+    ]
+  },
+  "facade-7.png": {
+    "width": 95,
+    "height": 307,
+    "cell": [
+      7,
+      0
+    ]
+  },
+  "facade-8.png": {
+    "width": 96,
+    "height": 299,
+    "cell": [
+      0,
+      1
+    ]
+  },
+  "facade-9.png": {
+    "width": 113,
+    "height": 300,
+    "cell": [
+      1,
+      1
+    ]
+  },
+  "facade-10.png": {
+    "width": 113,
+    "height": 299,
+    "cell": [
+      2,
+      1
+    ]
+  },
+  "facade-11.png": {
+    "width": 113,
+    "height": 301,
+    "cell": [
+      3,
+      1
+    ]
+  },
+  "facade-12.png": {
+    "width": 113,
+    "height": 300,
+    "cell": [
+      4,
+      1
+    ]
+  },
+  "facade-13.png": {
+    "width": 113,
+    "height": 295,
+    "cell": [
+      5,
+      1
+    ]
+  },
+  "facade-14.png": {
+    "width": 113,
+    "height": 299,
+    "cell": [
+      6,
+      1
+    ]
+  },
+  "facade-15.png": {
+    "width": 93,
+    "height": 298,
+    "cell": [
+      7,
+      1
+    ]
+  },
+  "cutaway-0.png": {
+    "width": 93,
+    "height": 314,
+    "cell": [
+      0,
+      0
+    ]
+  },
+  "cutaway-1.png": {
+    "width": 114,
+    "height": 331,
+    "cell": [
+      1,
+      0
+    ]
+  },
+  "cutaway-2.png": {
+    "width": 114,
+    "height": 331,
+    "cell": [
+      2,
+      0
+    ]
+  },
+  "cutaway-3.png": {
+    "width": 114,
+    "height": 322,
+    "cell": [
+      3,
+      0
+    ]
+  },
+  "cutaway-4.png": {
+    "width": 114,
+    "height": 331,
+    "cell": [
+      4,
+      0
+    ]
+  },
+  "cutaway-5.png": {
+    "width": 114,
+    "height": 307,
+    "cell": [
+      5,
+      0
+    ]
+  },
+  "cutaway-6.png": {
+    "width": 110,
+    "height": 322,
+    "cell": [
+      6,
+      0
+    ]
+  },
+  "cutaway-7.png": {
+    "width": 105,
+    "height": 329,
+    "cell": [
+      7,
+      0
+    ]
+  },
+  "cutaway-8.png": {
+    "width": 94,
+    "height": 325,
+    "cell": [
+      0,
+      1
+    ]
+  },
+  "cutaway-9.png": {
+    "width": 114,
+    "height": 326,
+    "cell": [
+      1,
+      1
+    ]
+  },
+  "cutaway-10.png": {
+    "width": 114,
+    "height": 326,
+    "cell": [
+      2,
+      1
+    ]
+  },
+  "cutaway-11.png": {
+    "width": 114,
+    "height": 328,
+    "cell": [
+      3,
+      1
+    ]
+  },
+  "cutaway-12.png": {
+    "width": 114,
+    "height": 328,
+    "cell": [
+      4,
+      1
+    ]
+  },
+  "cutaway-13.png": {
+    "width": 114,
+    "height": 328,
+    "cell": [
+      5,
+      1
+    ]
+  },
+  "cutaway-14.png": {
+    "width": 114,
+    "height": 330,
+    "cell": [
+      6,
+      1
+    ]
+  },
+  "cutaway-15.png": {
+    "width": 103,
+    "height": 330,
+    "cell": [
+      7,
+      1
+    ]
+  }
+}
