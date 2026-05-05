@@ -9,7 +9,7 @@ import {
   type Project,
 } from '../../data/projects';
 import type { HearthAction, HearthViewState } from './Hearth3D';
-import { createBuildingLayout } from './layout';
+import { createBuildingLayout, type RoomLayout } from './layout';
 import { COLORS, SPACE } from './spaceTokens';
 import { ProjectRoom3D } from './ProjectRoom3D';
 import { WindowLight } from './WindowLight';
@@ -110,9 +110,7 @@ export function BuildingModel({
     dispatch({ type: 'FOCUS_SESSION', projectId, sessionId: selectedSessionId });
   }
 
-  const facadeHeight = layout.height + SPACE.roomHeight + 0.5;
   const facadeWidth = layout.width + 0.4;
-  const facadeY = (layout.maxFloor - layout.minFloor) * SPACE.floorHeight * 0.5;
 
   return (
     <group
@@ -138,21 +136,11 @@ export function BuildingModel({
       </group>
 
       <group ref={facadeRef}>
-        <mesh position={[0, facadeY, SPACE.roomDepth / 2 + SPACE.facadeDepth / 2]}>
-          <boxGeometry args={[facadeWidth, facadeHeight, SPACE.facadeDepth]} />
-          <meshStandardMaterial color={COLORS.facade} roughness={0.68} />
-        </mesh>
-        <FacadeArchitecture
+        <SteppedFacade
+          rooms={layout.rooms}
           facadeWidth={facadeWidth}
-          facadeHeight={facadeHeight}
-          facadeY={facadeY}
           topFloorY={(layout.maxFloor - layout.minFloor) * SPACE.floorHeight}
-          style={layout.style}
         />
-        <mesh position={[0, facadeY + facadeHeight / 2 + 0.13, SPACE.roomDepth / 2 + SPACE.facadeDepth / 2]}>
-          <boxGeometry args={[facadeWidth + 0.24, 0.26, SPACE.facadeDepth + 0.05]} />
-          <meshStandardMaterial color={COLORS.facadeTrim} roughness={0.66} />
-        </mesh>
         {layout.rooms.map((room) => {
           const agent = AGENTS[room.project.primaryAgentId];
           const attention = getProjectAttentionState(room.project);
@@ -192,64 +180,89 @@ export function BuildingModel({
   );
 }
 
-function FacadeArchitecture({
+function SteppedFacade({
+  rooms,
   facadeWidth,
-  facadeHeight,
-  facadeY,
   topFloorY,
-  style,
 }: {
+  rooms: RoomLayout[];
   facadeWidth: number;
-  facadeHeight: number;
-  facadeY: number;
   topFloorY: number;
-  style: 'villa' | 'mansion';
 }) {
-  const z = SPACE.roomDepth / 2 + SPACE.facadeDepth + 0.01;
-  const columnCount = style === 'villa' ? 3 : 4;
-  const columns = Array.from({ length: columnCount }, (_, index) => {
-    const t = index / (columnCount - 1);
-    return -facadeWidth / 2 + t * facadeWidth;
-  });
+  const z = SPACE.roomDepth / 2 + SPACE.facadeDepth / 2;
 
   return (
     <group>
-      <mesh position={[0, facadeY - facadeHeight / 2 + 0.18, z]}>
-        <boxGeometry args={[facadeWidth + 0.36, 0.34, 0.12]} />
+      <mesh position={[0, -SPACE.roomHeight / 2 + 0.18, z + 0.07]}>
+        <boxGeometry args={[facadeWidth + 0.36, 0.32, 0.14]} />
         <meshStandardMaterial color={COLORS.stone} roughness={0.62} />
       </mesh>
-      {columns.map((x) => (
-        <mesh key={x} position={[x, facadeY, z + 0.02]}>
-          <boxGeometry args={[0.14, facadeHeight * 0.92, 0.08]} />
-          <meshStandardMaterial color={COLORS.stone} roughness={0.64} />
-        </mesh>
+      {rooms.map((room) => (
+        <FacadeRoomPanel key={room.project.id} room={room} z={z} />
       ))}
-      <mesh position={[0, topFloorY + SPACE.roomHeight / 2 + 0.42, z - 0.12]} rotation={[0.22, 0, 0]}>
-        <boxGeometry args={[facadeWidth + 0.62, 0.72, 0.48]} />
-        <meshStandardMaterial color={COLORS.roof} roughness={0.5} metalness={0.08} />
-      </mesh>
-      <mesh position={[0, topFloorY + SPACE.roomHeight / 2 + 0.08, z + 0.04]}>
-        <boxGeometry args={[facadeWidth + 0.74, 0.12, 0.2]} />
-        <meshStandardMaterial color={COLORS.roofEdge} roughness={0.48} />
-      </mesh>
-      <mesh position={[0, topFloorY + SPACE.roomHeight / 2 + 0.78, z - 0.42]}>
-        <boxGeometry args={[facadeWidth * 0.82, 0.08, 1.04]} />
+      <mesh position={[0, topFloorY + SPACE.roomHeight / 2 + 0.76, z - 0.36]}>
+        <boxGeometry args={[2.65, 0.1, 1.08]} />
         <meshStandardMaterial color="#5f8f90" roughness={0.34} metalness={0.08} />
       </mesh>
-      <mesh position={[facadeWidth * 0.34, topFloorY + SPACE.roomHeight / 2 + 0.98, z - 0.72]}>
+      <mesh position={[0.82, topFloorY + SPACE.roomHeight / 2 + 1.0, z - 0.66]}>
         <cylinderGeometry args={[0.11, 0.11, 0.52, 14]} />
         <meshStandardMaterial color={COLORS.copper} roughness={0.4} />
       </mesh>
-      <mesh position={[facadeWidth * 0.44, topFloorY + SPACE.roomHeight / 2 + 1.08, z - 0.66]}>
+      <mesh position={[1.08, topFloorY + SPACE.roomHeight / 2 + 1.1, z - 0.58]}>
         <cylinderGeometry args={[0.09, 0.09, 0.62, 14]} />
         <meshStandardMaterial color={COLORS.copper} roughness={0.4} />
       </mesh>
-      {[-0.36, -0.22, 0.24].map((x, index) => (
-        <mesh key={index} position={[facadeWidth * x, topFloorY + SPACE.roomHeight / 2 + 0.82, z - 0.3]}>
+      {[-0.72, -0.46, 0.34].map((x, index) => (
+        <mesh key={index} position={[x, topFloorY + SPACE.roomHeight / 2 + 0.9, z - 0.28]}>
           <sphereGeometry args={[0.18, 14, 10]} />
           <meshStandardMaterial color={COLORS.foliage} roughness={0.75} />
         </mesh>
       ))}
+    </group>
+  );
+}
+
+function FacadeRoomPanel({ room, z }: { room: RoomLayout; z: number }) {
+  const agent = AGENTS[room.project.primaryAgentId];
+  const floating = room.y > SPACE.floorHeight * 0.5;
+  const supportHeight = Math.max(0.2, room.y);
+
+  return (
+    <group position={[room.x, room.y, z]}>
+      {floating && (
+        <group position={[0, -room.height / 2 - supportHeight / 2, 0.1]}>
+          {[-room.width * 0.38, room.width * 0.38].map((x) => (
+            <mesh key={x} position={[x, 0, 0]}>
+              <boxGeometry args={[0.1, supportHeight, 0.08]} />
+              <meshStandardMaterial color={COLORS.stone} roughness={0.64} />
+            </mesh>
+          ))}
+        </group>
+      )}
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[room.width + 0.16, room.height + 0.16, SPACE.facadeDepth]} />
+        <meshStandardMaterial color={agent.palette.facade} roughness={0.68} />
+      </mesh>
+      <mesh position={[-room.width / 2 - 0.09, 0, 0.05]}>
+        <boxGeometry args={[0.12, room.height + 0.1, 0.1]} />
+        <meshStandardMaterial color={COLORS.stone} roughness={0.64} />
+      </mesh>
+      <mesh position={[room.width / 2 + 0.09, 0, 0.05]}>
+        <boxGeometry args={[0.12, room.height + 0.1, 0.1]} />
+        <meshStandardMaterial color={COLORS.stone} roughness={0.64} />
+      </mesh>
+      <mesh position={[0, -room.height / 2 - 0.08, 0.08]}>
+        <boxGeometry args={[room.width + 0.36, 0.16, 0.16]} />
+        <meshStandardMaterial color={COLORS.roofEdge} roughness={0.52} />
+      </mesh>
+      <mesh position={[0, room.height / 2 + 0.12, 0.02]} rotation={[0.08, 0, 0]}>
+        <boxGeometry args={[room.width + 0.42, 0.26, 0.34]} />
+        <meshStandardMaterial color={COLORS.roof} roughness={0.5} metalness={0.08} />
+      </mesh>
+      <mesh position={[0, room.height / 2 - 0.08, 0.1]}>
+        <boxGeometry args={[room.width + 0.3, 0.08, 0.14]} />
+        <meshStandardMaterial color={COLORS.facadeTrim} roughness={0.58} />
+      </mesh>
     </group>
   );
 }
