@@ -51,15 +51,16 @@ function getDeskPosition(slot: number, total: number) {
 }
 
 function getMassingSlots(count: number) {
-  if (count <= 5) {
+  if (count <= 6) {
     return {
       style: 'villa' as const,
       slots: [
-        { slot: -0.55, floor: 0 },
-        { slot: 0.55, floor: 0 },
-        { slot: -0.55, floor: 1 },
-        { slot: 0.55, floor: 1 },
-        { slot: 0, floor: 2 },
+        { slot: -1, floor: 0, z: 0 },
+        { slot: 0, floor: 0, z: 0 },
+        { slot: 1, floor: 0, z: 0 },
+        { slot: -0.1, floor: 1, z: -0.58 },
+        { slot: -0.72, floor: 2, z: 0.44 },
+        { slot: 0.68, floor: 2, z: -1.08 },
       ],
     };
   }
@@ -67,14 +68,14 @@ function getMassingSlots(count: number) {
   return {
     style: 'mansion' as const,
     slots: [
-      { slot: -1, floor: 0 },
-      { slot: 0, floor: 0 },
-      { slot: 1, floor: 0 },
-      { slot: -1, floor: 1 },
-      { slot: 0, floor: 1 },
-      { slot: 1, floor: 1 },
-      { slot: -0.5, floor: 2 },
-      { slot: 0.5, floor: 2 },
+      { slot: -1, floor: 0, z: 0 },
+      { slot: 0, floor: 0, z: 0 },
+      { slot: 1, floor: 0, z: 0 },
+      { slot: -0.15, floor: 1, z: -0.58 },
+      { slot: -0.82, floor: 2, z: 0.44 },
+      { slot: 0.62, floor: 2, z: -1.08 },
+      { slot: -1.15, floor: 1, z: -1.28 },
+      { slot: 1.12, floor: 1, z: -1.28 },
     ],
   };
 }
@@ -101,18 +102,14 @@ export function createBuildingLayout(projects: Project[]): BuildingLayout {
     placement: massing.slots[index] ?? massing.slots[massing.slots.length - 1],
   }));
   const floors = placedProjects.map(({ placement }) => placement.floor);
-  const slots = placedProjects.map(({ placement }) => placement.slot);
   const minFloor = Math.min(...floors);
   const maxFloor = Math.max(...floors);
-  const minSlot = Math.min(...slots);
-  const maxSlot = Math.max(...slots);
   const roomStep = SPACE.roomWidth + SPACE.slotGap;
 
   const rooms = placedProjects.map(({ project, placement }) => {
-    const floorIndex = placement.floor - minFloor;
-    const x = (placement.slot - (minSlot + maxSlot) / 2) * roomStep - floorIndex * 0.18;
+    const x = placement.slot * roomStep;
     const y = (placement.floor - minFloor) * SPACE.floorHeight;
-    const z = -floorIndex * 0.28;
+    const z = placement.z;
     const deskSessions = project.sessions.slice(0, 3);
     const desks = deskSessions.map((session, index) => {
       const position = getDeskPosition(index, deskSessions.length);
@@ -135,17 +132,21 @@ export function createBuildingLayout(projects: Project[]): BuildingLayout {
       window: {
         x,
         y: y + 0.18,
-        z: z + SPACE.roomDepth / 2 + SPACE.facadeDepth + 0.08,
+        z: SPACE.roomDepth / 2 + SPACE.facadeDepth + 0.08,
       },
       desks,
     };
   });
+  const minX = Math.min(...rooms.map((room) => room.x - room.width / 2));
+  const maxX = Math.max(...rooms.map((room) => room.x + room.width / 2));
+  const minZ = Math.min(...rooms.map((room) => room.z - room.depth / 2));
+  const maxZ = Math.max(...rooms.map((room) => room.z + room.depth / 2));
 
   return {
     rooms,
-    width: (maxSlot - minSlot + 1) * roomStep,
+    width: maxX - minX,
     height: (maxFloor - minFloor + 1) * SPACE.floorHeight,
-    depth: SPACE.roomDepth,
+    depth: maxZ - minZ,
     minFloor,
     maxFloor,
     style: massing.style,
