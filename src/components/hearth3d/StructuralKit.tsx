@@ -45,6 +45,7 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
             openSide="back"
           />
           <Planter
+            variant="bench"
             x={middle.x - middle.width * 0.33}
             y={middle.y - middle.height / 2 + 0.25}
             z={middle.z + middle.depth / 2 + 0.23}
@@ -104,6 +105,7 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
             openSide="left"
           />
           <Planter
+            variant="tree"
             x={rightGround.x + rightGround.width * 0.28}
             y={rightGround.y + rightGround.height / 2 + 0.28}
             z={rightGround.z + rightGround.depth / 2 + 0.26}
@@ -113,6 +115,7 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
 
       {leftGround && (
         <Planter
+          variant="small"
           x={leftGround.x - leftGround.width * 0.35}
           y={leftGround.y + leftGround.height / 2 + 0.24}
           z={leftGround.z + leftGround.depth / 2 - 0.1}
@@ -274,7 +277,77 @@ function Railing({
   );
 }
 
-function Planter({ x, y, z }: { x: number; y: number; z: number }) {
+function Planter({
+  x,
+  y,
+  z,
+  variant,
+}: {
+  x: number;
+  y: number;
+  z: number;
+  variant: 'small' | 'tree' | 'bench';
+}) {
+  if (variant === 'tree') {
+    return (
+      <group position={[x, y, z]}>
+        <mesh>
+          <cylinderGeometry args={[0.34, 0.38, 0.2, 18]} />
+          <meshStandardMaterial color={COLORS.facadeTrim} roughness={0.68} />
+        </mesh>
+        <mesh position={[0, 0.18, 0]}>
+          <cylinderGeometry args={[0.07, 0.09, 0.42, 10]} />
+          <meshStandardMaterial color="#7b4a2d" roughness={0.7} />
+        </mesh>
+        <mesh position={[0, 0.55, 0]}>
+          <sphereGeometry args={[0.28, 14, 10]} />
+          <meshStandardMaterial color={COLORS.foliage} roughness={0.76} />
+        </mesh>
+        <mesh position={[-0.18, 0.46, 0.04]}>
+          <sphereGeometry args={[0.2, 12, 8]} />
+          <meshStandardMaterial color="#d08a45" roughness={0.76} />
+        </mesh>
+        <mesh position={[0.17, 0.48, -0.02]}>
+          <sphereGeometry args={[0.19, 12, 8]} />
+          <meshStandardMaterial color={COLORS.foliage} roughness={0.76} />
+        </mesh>
+      </group>
+    );
+  }
+
+  if (variant === 'bench') {
+    return (
+      <group position={[x, y, z]}>
+        <mesh>
+          <boxGeometry args={[0.82, 0.16, 0.32]} />
+          <meshStandardMaterial color={COLORS.facadeTrim} roughness={0.68} />
+        </mesh>
+        <mesh position={[-0.2, 0.15, 0]}>
+          <sphereGeometry args={[0.12, 10, 8]} />
+          <meshStandardMaterial color={COLORS.foliage} roughness={0.76} />
+        </mesh>
+        <mesh position={[0.02, 0.18, 0.02]}>
+          <sphereGeometry args={[0.1, 10, 8]} />
+          <meshStandardMaterial color="#d08a45" roughness={0.76} />
+        </mesh>
+        <mesh position={[0.22, 0.09, 0.28]}>
+          <boxGeometry args={[0.56, 0.08, 0.14]} />
+          <meshStandardMaterial color="#8b5a35" roughness={0.62} />
+        </mesh>
+        <mesh position={[0.22, 0.2, 0.37]} rotation={[0.32, 0, 0]}>
+          <boxGeometry args={[0.56, 0.06, 0.18]} />
+          <meshStandardMaterial color="#8b5a35" roughness={0.62} />
+        </mesh>
+        {[-0.03, 0.47].map((offset) => (
+          <mesh key={offset} position={[offset, 0.005, 0.28]}>
+            <boxGeometry args={[0.04, 0.14, 0.04]} />
+            <meshStandardMaterial color={COLORS.roofEdge} roughness={0.5} />
+          </mesh>
+        ))}
+      </group>
+    );
+  }
+
   return (
     <group position={[x, y, z]}>
       <mesh>
