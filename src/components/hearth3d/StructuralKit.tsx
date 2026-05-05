@@ -6,15 +6,31 @@ type StructuralKitProps = {
 };
 
 function getRoomsByTier(rooms: RoomLayout[]) {
-  const ground = rooms.filter((room) => room.y < SPACE.floorHeight * 0.5).sort((a, b) => a.x - b.x);
+  const ground = rooms
+    .filter((room) => room.y < SPACE.floorHeight * 0.5)
+    .sort((a, b) => a.x - b.x);
   const middle = rooms.find(
     (room) =>
       room.y >= SPACE.floorHeight * 0.5 &&
       room.y < SPACE.floorHeight * 1.5,
   );
-  const top = rooms.filter((room) => room.y >= SPACE.floorHeight * 1.5).sort((a, b) => a.x - b.x);
+  const top = rooms
+    .filter((room) => room.y >= SPACE.floorHeight * 1.5)
+    .sort((a, b) => a.x - b.x);
 
   return { ground, middle, top };
+}
+
+function roomTopY(room: RoomLayout) {
+  return room.y + room.height / 2;
+}
+
+function roomBottomY(room: RoomLayout) {
+  return room.y - room.height / 2;
+}
+
+function roomFrontZ(room: RoomLayout) {
+  return room.z + room.depth / 2;
 }
 
 export function StructuralKit({ rooms }: StructuralKitProps) {
@@ -44,32 +60,26 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
             depth={0.42}
             openSide="back"
           />
-          <Planter
-            variant="bench"
-            x={middle.x - middle.width * 0.33}
-            y={middle.y - middle.height / 2 + 0.25}
-            z={middle.z + middle.depth / 2 + 0.23}
-          />
         </>
       )}
 
       {leftTop && (
-        <TallSupportColumns
+        <HighSupportColumns
           x={leftTop.x}
           z={leftTop.z + leftTop.depth / 2 - 0.2}
-          bottomY={middle ? middle.y + middle.height / 2 + 0.06 : SPACE.roomHeight / 2}
-          topY={leftTop.y - leftTop.height / 2}
+          bottomY={SPACE.roomHeight / 2 + 0.08}
+          topY={roomBottomY(leftTop)}
           width={leftTop.width}
         />
       )}
 
       {rightTop && (
         <>
-          <TallSupportColumns
+          <HighSupportColumns
             x={rightTop.x}
             z={rightTop.z + rightTop.depth / 2 - 0.18}
-            bottomY={middle ? middle.y + middle.height / 2 + 0.04 : SPACE.roomHeight / 2}
-            topY={rightTop.y - rightTop.height / 2}
+            bottomY={SPACE.roomHeight / 2 + 0.08}
+            topY={roomBottomY(rightTop)}
             width={rightTop.width}
           />
           <Railing
@@ -86,7 +96,7 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
       {centerGround && rightTop && (
         <Staircase
           x={centerGround.x + centerGround.width * 0.42}
-          y={centerGround.y + centerGround.height / 2 + 0.08}
+          y={roomTopY(centerGround) + 0.08}
           z={centerGround.z - centerGround.depth * 0.14}
           rise={rightTop.y - centerGround.y - 0.82}
           runX={rightTop.x - centerGround.x - 0.92}
@@ -94,31 +104,62 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
         />
       )}
 
+      {leftGround && middle && (
+        <Staircase
+          x={leftGround.x + leftGround.width * 0.38}
+          y={roomTopY(leftGround) + 0.08}
+          z={leftGround.z + leftGround.depth * 0.26}
+          rise={middle.y - leftGround.y - 0.86}
+          runX={middle.x - leftGround.x - 0.78}
+          runZ={middle.z - leftGround.z - 0.38}
+        />
+      )}
+
+      {middle && leftTop && (
+        <Staircase
+          x={middle.x - middle.width * 0.1}
+          y={roomTopY(middle) + 0.08}
+          z={middle.z + middle.depth * 0.26}
+          rise={leftTop.y - middle.y - 0.86}
+          runX={leftTop.x - middle.x - 0.18}
+          runZ={leftTop.z - middle.z - 0.12}
+        />
+      )}
+
       {rightGround && (
         <>
           <Railing
             x={rightGround.x + 0.06}
-            y={rightGround.y + rightGround.height / 2 + 0.22}
-            z={rightGround.z + rightGround.depth / 2 + 0.3}
+            y={roomTopY(rightGround) + 0.22}
+            z={roomFrontZ(rightGround) + 0.3}
             width={rightGround.width * 0.9}
             depth={0.52}
             openSide="left"
           />
           <Planter
             variant="tree"
-            x={rightGround.x + rightGround.width * 0.28}
-            y={rightGround.y + rightGround.height / 2 + 0.28}
-            z={rightGround.z + rightGround.depth / 2 + 0.26}
+            x={rightGround.x}
+            y={roomTopY(rightGround) + 0.1}
+            z={rightGround.z}
           />
         </>
       )}
 
-      {leftGround && (
+      {centerGround && (
         <Planter
-          variant="small"
-          x={leftGround.x - leftGround.width * 0.35}
-          y={leftGround.y + leftGround.height / 2 + 0.24}
-          z={leftGround.z + leftGround.depth / 2 - 0.1}
+          variant="bench"
+          x={centerGround.x - centerGround.width * 0.22}
+          y={roomTopY(centerGround) + 0.08}
+          z={roomFrontZ(centerGround) - 0.22}
+        />
+      )}
+
+      {leftGround && (
+        <PlanterRow
+          x={leftGround.x - leftGround.width * 0.2}
+          y={roomTopY(leftGround) + 0.08}
+          z={roomFrontZ(leftGround) - 0.12}
+          count={3}
         />
       )}
     </group>
@@ -151,7 +192,7 @@ function ShortSupportColumns({
   );
 }
 
-function TallSupportColumns({
+function HighSupportColumns({
   x,
   z,
   bottomY,
@@ -164,12 +205,12 @@ function TallSupportColumns({
   topY: number;
   width: number;
 }) {
-  const height = Math.max(0.25, topY - bottomY);
+  const height = Math.max(SPACE.roomHeight + 0.24, topY - bottomY);
   return (
     <group>
       {[-width * 0.36, width * 0.36].map((offset) => (
         <mesh key={offset} position={[x + offset, bottomY + height / 2, z]}>
-          <boxGeometry args={[0.09, height, 0.09]} />
+          <boxGeometry args={[0.1, height, 0.1]} />
           <meshStandardMaterial color={COLORS.stone} roughness={0.62} />
         </mesh>
       ))}
@@ -273,6 +314,32 @@ function Railing({
           <meshStandardMaterial color={COLORS.facadeTrim} roughness={0.48} />
         </mesh>
       )}
+    </group>
+  );
+}
+
+function PlanterRow({
+  x,
+  y,
+  z,
+  count,
+}: {
+  x: number;
+  y: number;
+  z: number;
+  count: number;
+}) {
+  return (
+    <group>
+      {Array.from({ length: count }, (_, index) => (
+        <Planter
+          key={index}
+          variant="small"
+          x={x + index * 0.48}
+          y={y}
+          z={z}
+        />
+      ))}
     </group>
   );
 }
