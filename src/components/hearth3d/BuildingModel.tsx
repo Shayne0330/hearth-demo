@@ -168,16 +168,6 @@ export function BuildingModel({
         })}
       </group>
 
-      <mesh position={[0, -SPACE.roomHeight / 2 - 0.18, -0.08]}>
-        <boxGeometry args={[facadeWidth + 0.8, 0.12, SPACE.roomDepth + 0.8]} />
-        <meshStandardMaterial color={COLORS.ground} roughness={0.8} />
-      </mesh>
-      {!open && (
-        <mesh position={[0, -SPACE.roomHeight / 2 - 0.28, -0.18]}>
-          <boxGeometry args={[facadeWidth + 1.1, 0.035, SPACE.roomDepth + 1.1]} />
-          <meshStandardMaterial color="#000000" transparent opacity={0.28} />
-        </mesh>
-      )}
     </group>
   );
 }
