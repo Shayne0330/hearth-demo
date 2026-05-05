@@ -8,6 +8,7 @@ import {
   type Project,
 } from '../../data/projects';
 import type { HearthViewState } from './Hearth3D';
+import { createBuildingLayout } from './layout';
 import { COLORS } from './spaceTokens';
 
 type CollapsedBuildingIconProps = {
@@ -19,18 +20,20 @@ type IconRoom = {
   project?: Project;
   x: number;
   y: number;
+  z: number;
+  width: number;
+  height: number;
   shape: 'tall' | 'wide' | 'round';
+  floating?: boolean;
 };
 
-const ICON_ROOMS: Array<Omit<IconRoom, 'project'>> = [
-  { x: -1.35, y: -0.82, shape: 'tall' },
-  { x: -0.45, y: -0.82, shape: 'wide' },
-  { x: 0.45, y: -0.82, shape: 'tall' },
-  { x: 1.35, y: -0.82, shape: 'wide' },
-  { x: -1.35, y: 0.02, shape: 'wide' },
-  { x: -0.45, y: 0.02, shape: 'round' },
-  { x: 0.45, y: 0.02, shape: 'wide' },
-  { x: 1.35, y: 0.02, shape: 'tall' },
+const ICON_ROOM_SLOTS: Array<Omit<IconRoom, 'project'>> = [
+  { x: -1.34, y: -0.94, z: 0.14, width: 1.16, height: 0.82, shape: 'tall' },
+  { x: 0, y: -0.94, z: 0.08, width: 1.18, height: 0.82, shape: 'wide' },
+  { x: 1.34, y: -0.94, z: 0.02, width: 1.16, height: 0.82, shape: 'tall' },
+  { x: -0.12, y: -0.06, z: -0.5, width: 1.18, height: 0.84, shape: 'round', floating: true },
+  { x: -0.8, y: 0.82, z: 0.34, width: 1.08, height: 0.78, shape: 'wide', floating: true },
+  { x: 0.72, y: 0.82, z: -0.78, width: 1.08, height: 0.78, shape: 'tall', floating: true },
 ];
 
 function getSessionCounts(project?: Project) {
@@ -48,14 +51,13 @@ export function CollapsedBuildingIcon({
   viewState,
 }: CollapsedBuildingIconProps) {
   const rootRef = useRef<Group>(null);
-  const iconRooms = useMemo<IconRoom[]>(
-    () =>
-      ICON_ROOMS.map((room, index) => ({
-        ...room,
-        project: projects.filter((project) => project.state !== 'archived')[index],
-      })),
-    [projects],
-  );
+  const iconRooms = useMemo<IconRoom[]>(() => {
+    const layoutProjects = createBuildingLayout(projects).rooms.map((room) => room.project);
+    return ICON_ROOM_SLOTS.map((room, index) => ({
+      ...room,
+      project: layoutProjects[index],
+    }));
+  }, [projects]);
 
   useFrame((_, delta) => {
     const root = rootRef.current;
@@ -65,20 +67,17 @@ export function CollapsedBuildingIcon({
     root.scale.x = MathUtils.damp(root.scale.x, targetScale, 7, delta);
     root.scale.y = MathUtils.damp(root.scale.y, targetScale, 7, delta);
     root.scale.z = MathUtils.damp(root.scale.z, targetScale, 7, delta);
-    root.rotation.y = MathUtils.damp(root.rotation.y, -0.22, 5, delta);
+    root.rotation.y = MathUtils.damp(root.rotation.y, -0.28, 5, delta);
   });
 
   return (
-    <group ref={rootRef} position={[0, -0.2, 0]}>
-      <group rotation={[0, 0, 0]}>
-        <Base />
-        <MainFacade />
-        <RoofGarden />
-        {iconRooms.map((room, index) => (
-          <IconWindow key={index} room={room} />
-        ))}
-        <SideWing />
-      </group>
+    <group ref={rootRef} position={[0, -0.16, 0]}>
+      <Base />
+      <BackServiceWall />
+      {iconRooms.map((room, index) => (
+        <IconRoomBlock key={index} room={room} />
+      ))}
+      <SkyTerrace />
     </group>
   );
 }
@@ -86,77 +85,111 @@ export function CollapsedBuildingIcon({
 function Base() {
   return (
     <group>
-      <mesh position={[0, -1.42, 0]}>
-        <boxGeometry args={[4.35, 0.16, 1.06]} />
+      <mesh position={[0, -1.46, -0.08]}>
+        <boxGeometry args={[4.46, 0.14, 1.42]} />
         <meshStandardMaterial color={COLORS.stone} roughness={0.66} />
       </mesh>
-      <mesh position={[0.12, -1.52, -0.06]}>
-        <boxGeometry args={[4.62, 0.08, 1.24]} />
+      <mesh position={[0.12, -1.56, -0.2]}>
+        <boxGeometry args={[4.7, 0.08, 1.62]} />
         <meshStandardMaterial color="#7a6a5b" roughness={0.72} />
       </mesh>
-      <mesh position={[0.2, -1.62, -0.14]}>
-        <boxGeometry args={[4.9, 0.05, 1.38]} />
+      <mesh position={[0.26, -1.66, -0.34]}>
+        <boxGeometry args={[4.94, 0.05, 1.86]} />
         <meshStandardMaterial color="#000000" transparent opacity={0.24} />
       </mesh>
     </group>
   );
 }
 
-function MainFacade() {
+function BackServiceWall() {
   return (
-    <group>
-      <mesh position={[0, -0.42, 0]}>
-        <boxGeometry args={[4.08, 1.98, 0.32]} />
-        <meshStandardMaterial color="#60372c" roughness={0.72} />
+    <group position={[-1.96, -0.02, -0.64]}>
+      <mesh>
+        <boxGeometry args={[0.24, 2.7, 0.3]} />
+        <meshStandardMaterial color="#4a2a25" roughness={0.76} />
       </mesh>
-      {[-1.86, -0.68, 0.68, 1.86].map((x) => (
-        <mesh key={x} position={[x, -0.42, 0.18]}>
-          <boxGeometry args={[0.08, 1.9, 0.08]} />
-          <meshStandardMaterial color="#d4c1a6" roughness={0.62} />
+      <mesh position={[0, 1.42, 0.08]} rotation={[0, 0, -0.18]}>
+        <boxGeometry args={[0.32, 0.72, 0.36]} />
+        <meshStandardMaterial color={COLORS.roof} roughness={0.52} />
+      </mesh>
+      {[-0.78, 0.08, 0.86].map((y) => (
+        <mesh key={y} position={[0.14, y, 0.19]}>
+          <boxGeometry args={[0.08, 0.1, 0.12]} />
+          <meshStandardMaterial color={COLORS.stone} roughness={0.62} />
         </mesh>
       ))}
-      <mesh position={[0, -1.02, 0.22]}>
-        <boxGeometry args={[4.22, 0.08, 0.14]} />
-        <meshStandardMaterial color="#171b2b" roughness={0.52} />
-      </mesh>
-      <mesh position={[0, 0.48, 0.24]} rotation={[0.18, 0, 0]}>
-        <boxGeometry args={[4.46, 0.54, 0.52]} />
-        <meshStandardMaterial color={COLORS.roof} roughness={0.5} metalness={0.08} />
-      </mesh>
-      <mesh position={[0, 0.2, 0.36]}>
-        <boxGeometry args={[4.68, 0.12, 0.18]} />
-        <meshStandardMaterial color={COLORS.roofEdge} roughness={0.5} />
-      </mesh>
     </group>
   );
 }
 
-function RoofGarden() {
+function IconRoomBlock({ room }: { room: IconRoom }) {
+  const agent = room.project ? AGENTS[room.project.primaryAgentId] : AGENTS.cursor;
+  const wallColor = room.project ? agent.palette.facade : '#4b302b';
+  const sideColor = room.project ? agent.palette.dim : '#2c2024';
+
   return (
-    <group position={[0, 0.98, -0.16]}>
+    <group position={[room.x, room.y, room.z]}>
+      {room.floating && <SupportColumns room={room} />}
       <mesh position={[0, 0, 0]}>
-        <boxGeometry args={[3.78, 0.12, 0.82]} />
+        <boxGeometry args={[room.width, room.height, 0.42]} />
+        <meshStandardMaterial color={wallColor} roughness={0.72} />
+      </mesh>
+      <mesh position={[room.width / 2 + 0.045, 0, -0.08]}>
+        <boxGeometry args={[0.09, room.height, 0.52]} />
+        <meshStandardMaterial color={sideColor} roughness={0.75} />
+      </mesh>
+      <mesh position={[0, -room.height / 2 - 0.05, 0.06]}>
+        <boxGeometry args={[room.width + 0.22, 0.1, 0.58]} />
+        <meshStandardMaterial color={COLORS.roofEdge} roughness={0.56} />
+      </mesh>
+      <mesh position={[0, room.height / 2 + 0.07, 0.02]}>
+        <boxGeometry args={[room.width + 0.18, 0.12, 0.6]} />
+        <meshStandardMaterial color={COLORS.roof} roughness={0.5} metalness={0.06} />
+      </mesh>
+      <mesh position={[0, room.height / 2 + 0.15, 0.18]}>
+        <boxGeometry args={[room.width + 0.08, 0.06, 0.22]} />
+        <meshStandardMaterial color={COLORS.facadeTrim} roughness={0.58} />
+      </mesh>
+      <IconWindow room={room} />
+    </group>
+  );
+}
+
+function SupportColumns({ room }: { room: IconRoom }) {
+  return (
+    <group position={[0, -room.height / 2 - 0.26, 0.18]}>
+      {[-room.width * 0.34, room.width * 0.34].map((x) => (
+        <mesh key={x} position={[x, 0, 0]}>
+          <boxGeometry args={[0.07, 0.48, 0.07]} />
+          <meshStandardMaterial color={COLORS.stone} roughness={0.64} />
+        </mesh>
+      ))}
+    </group>
+  );
+}
+
+function SkyTerrace() {
+  return (
+    <group position={[-0.02, 1.43, -0.24]}>
+      <mesh position={[0, 0, 0]}>
+        <boxGeometry args={[2.5, 0.1, 0.78]} />
         <meshStandardMaterial color="#6e9fa0" roughness={0.42} metalness={0.04} />
       </mesh>
-      <mesh position={[-1.12, 0.14, 0.18]}>
-        <sphereGeometry args={[0.16, 14, 10]} />
+      <mesh position={[-1.02, 0.16, 0.16]}>
+        <sphereGeometry args={[0.15, 14, 10]} />
         <meshStandardMaterial color={COLORS.foliage} roughness={0.76} />
       </mesh>
-      <mesh position={[-0.86, 0.16, 0.12]}>
-        <sphereGeometry args={[0.13, 14, 10]} />
+      <mesh position={[-0.78, 0.17, 0.1]}>
+        <sphereGeometry args={[0.12, 14, 10]} />
         <meshStandardMaterial color="#d08a45" roughness={0.76} />
       </mesh>
-      <mesh position={[1.18, 0.24, -0.18]}>
+      <mesh position={[0.96, 0.24, -0.1]}>
         <cylinderGeometry args={[0.08, 0.08, 0.48, 14]} />
         <meshStandardMaterial color={COLORS.copper} roughness={0.48} />
       </mesh>
-      <mesh position={[1.42, 0.3, -0.1]}>
+      <mesh position={[1.18, 0.3, -0.02]}>
         <cylinderGeometry args={[0.07, 0.07, 0.56, 14]} />
         <meshStandardMaterial color={COLORS.copper} roughness={0.48} />
-      </mesh>
-      <mesh position={[0.18, 0.08, 0.1]}>
-        <torusGeometry args={[0.14, 0.025, 8, 24]} />
-        <meshStandardMaterial color="#f4d4a3" roughness={0.48} />
       </mesh>
     </group>
   );
@@ -171,9 +204,10 @@ function IconWindow({ room }: { room: IconRoom }) {
   const counts = getSessionCounts(project);
   const glow = lit ? agent.palette.glow : breathing ? agent.palette.accent : '#2f2925';
   const emissiveIntensity = lit ? 0.9 : breathing ? 0.18 : 0.02;
+  const faceZ = 0.24;
 
   return (
-    <group position={[room.x, room.y, 0.42]}>
+    <group position={[0, -0.02, faceZ]}>
       {room.shape === 'round' ? (
         <>
           <mesh>
@@ -192,7 +226,7 @@ function IconWindow({ room }: { room: IconRoom }) {
       ) : (
         <>
           <mesh>
-            <boxGeometry args={[room.shape === 'wide' ? 0.48 : 0.34, room.shape === 'wide' ? 0.28 : 0.48, 0.04]} />
+            <boxGeometry args={[room.shape === 'wide' ? 0.5 : 0.34, room.shape === 'wide' ? 0.28 : 0.46, 0.04]} />
             <meshStandardMaterial
               color={glow}
               emissive={agent.palette.glow}
@@ -201,10 +235,14 @@ function IconWindow({ room }: { room: IconRoom }) {
             />
           </mesh>
           <mesh position={[0, 0, -0.035]}>
-            <boxGeometry args={[room.shape === 'wide' ? 0.58 : 0.44, room.shape === 'wide' ? 0.38 : 0.58, 0.04]} />
+            <boxGeometry args={[room.shape === 'wide' ? 0.6 : 0.44, room.shape === 'wide' ? 0.38 : 0.56, 0.04]} />
             <meshStandardMaterial color={agent.palette.accent} roughness={0.58} />
           </mesh>
         </>
+      )}
+
+      {lit && (
+        <pointLight color={agent.palette.glow} intensity={0.55} distance={1.1} position={[0, 0, 0.16]} />
       )}
 
       {counts.cursor > 0 && (
@@ -252,25 +290,6 @@ function IconWindow({ room }: { room: IconRoom }) {
           </mesh>
         </group>
       )}
-    </group>
-  );
-}
-
-function SideWing() {
-  return (
-    <group position={[2.22, -0.42, -0.22]} rotation={[0, -0.12, 0]}>
-      <mesh>
-        <boxGeometry args={[0.64, 1.76, 0.72]} />
-        <meshStandardMaterial color="#4b302b" roughness={0.72} />
-      </mesh>
-      <mesh position={[0, 0.52, 0.12]} rotation={[0.1, 0, 0]}>
-        <boxGeometry args={[0.82, 0.42, 0.78]} />
-        <meshStandardMaterial color={COLORS.roof} roughness={0.5} />
-      </mesh>
-      <mesh position={[0, -0.56, 0.38]}>
-        <boxGeometry args={[0.42, 0.5, 0.04]} />
-        <meshStandardMaterial color="#201c22" roughness={0.5} />
-      </mesh>
     </group>
   );
 }

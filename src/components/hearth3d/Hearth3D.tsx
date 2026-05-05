@@ -358,13 +358,13 @@ function ExpandedOverlay({
       >
         收起
       </button>
-      <div
-        className={[
-          'pointer-events-auto absolute bottom-5 right-5 top-16 w-[min(360px,35vw)] rounded-3xl border border-white/55 px-6 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.28)] backdrop-blur-2xl',
-          desktopMode ? 'bg-[#efe4cf]/92' : 'bg-[#efe4cf]/88',
-        ].join(' ')}
-      >
-        {project && session && agent ? (
+      {project && session && agent && (
+        <div
+          className={[
+            'pointer-events-auto absolute bottom-5 right-5 top-16 w-[min(360px,35vw)] rounded-3xl border border-white/55 px-6 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.28)] backdrop-blur-2xl',
+            desktopMode ? 'bg-[#efe4cf]/92' : 'bg-[#efe4cf]/88',
+          ].join(' ')}
+        >
           <>
             <div className="flex items-center justify-between gap-3">
               <div>
@@ -402,12 +402,8 @@ function ExpandedOverlay({
               </div>
             </div>
           </>
-        ) : (
-          <div className="text-sm text-[#43362b]">
-            点击亮灯房间，展开具体的 Session 工作台。
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </>
   );
 }
