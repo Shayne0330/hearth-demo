@@ -5,15 +5,55 @@ export type AgentId = 'cursor' | 'codex' | 'manus' | 'claude';
 export type Agent = {
   id: AgentId;
   name: string;
-  // 主题色：屋顶 / 墙体亮面 / 墙体暗面 / 强调色
   palette: {
-    roof: string;
-    wallLight: string;
-    wallDark: string;
+    facade: string;
+    wall: string;
+    floor: string;
     accent: string;
     glow: string;
+    dim: string;
   };
   vibe: string;
+};
+
+export type SessionStatus = 'running' | 'replied' | 'idle' | 'archived';
+
+export type Session = {
+  id: string;
+  title: string;
+  agentId: AgentId;
+  status: SessionStatus;
+  lastGoal: string;
+  lastSummary: string;
+  updatedHoursAgo: number;
+  unread?: boolean;
+  desk: {
+    slot: number;
+  };
+};
+
+export type Project = {
+  id: string;
+  name: string;
+  vibe: string;
+  primaryAgentId: AgentId;
+  state: RoomState;
+  lastTouchedHoursAgo: number;
+  branch?: string;
+  activeSessionId?: string;
+  sessions: Session[];
+  room: {
+    floor: number;
+    slot: number;
+    cluster: AgentId;
+  };
+};
+
+export type ProjectAttentionState = {
+  isLit: boolean;
+  isBreathing: boolean;
+  litSessions: Session[];
+  runningSessions: Session[];
 };
 
 export const AGENTS: Record<AgentId, Agent> = {
@@ -21,35 +61,38 @@ export const AGENTS: Record<AgentId, Agent> = {
     id: 'cursor',
     name: 'Cursor',
     palette: {
-      roof: '#c75a3c',
-      wallLight: '#e8a36b',
-      wallDark: '#a86a3f',
+      facade: '#87492f',
+      wall: '#b86b45',
+      floor: '#4f3124',
       accent: '#f4a85d',
       glow: '#ffd8a0',
+      dim: '#5a392f',
     },
-    vibe: '主战场',
+    vibe: '主工作台',
   },
   codex: {
     id: 'codex',
     name: 'Codex',
     palette: {
-      roof: '#3a6f6a',
-      wallLight: '#7eb0a6',
-      wallDark: '#4f7c75',
+      facade: '#315e5b',
+      wall: '#6f9f96',
+      floor: '#284542',
       accent: '#9ed4c5',
-      glow: '#bfeadd',
+      glow: '#d4fff5',
+      dim: '#2d4c4a',
     },
-    vibe: '云端帮手',
+    vibe: '异步帮手',
   },
   manus: {
     id: 'manus',
     name: 'Manus',
     palette: {
-      roof: '#6b4a8a',
-      wallLight: '#a98ec4',
-      wallDark: '#735793',
+      facade: '#5f4976',
+      wall: '#9276ac',
+      floor: '#3b2f48',
       accent: '#c8aedb',
-      glow: '#e0cdf0',
+      glow: '#eadcff',
+      dim: '#463758',
     },
     vibe: '实验室',
   },
@@ -57,179 +100,235 @@ export const AGENTS: Record<AgentId, Agent> = {
     id: 'claude',
     name: 'Claude',
     palette: {
-      roof: '#a87a3a',
-      wallLight: '#d4b07a',
-      wallDark: '#8e6a3c',
+      facade: '#80623a',
+      wall: '#b9935f',
+      floor: '#4c3a24',
       accent: '#e8c98a',
-      glow: '#f4e0b5',
+      glow: '#fff0c2',
+      dim: '#5b472c',
     },
     vibe: '思考室',
   },
 };
 
-export type Project = {
-  id: string;
-  name: string;
-  vibe: string;
-  agentId: AgentId;
-  state: RoomState;
-  lastTouchedHoursAgo: number;
-  branch?: string;
-  /** 等距画布坐标（百分比），由 Palace 直接消费 */
-  pos: { x: number; y: number };
-  /** 装饰：屋顶元素、窗户颜色等 */
-  decor?: {
-    chimney?: boolean;
-    skylight?: boolean;
-    plant?: boolean;
-    coffee?: boolean;
-    coverSheets?: boolean;
-  };
-};
-
 export const PROJECTS: Project[] = [
-  // —— Cursor 区（左上、中左）
   {
     id: 'helios',
     name: 'Helios',
     vibe: '深夜思考状态',
-    agentId: 'cursor',
+    primaryAgentId: 'cursor',
     state: 'active',
     lastTouchedHoursAgo: 0.2,
-    branch: 'feature/iso-palace',
-    pos: { x: 18, y: 25 },
-    decor: { chimney: true, skylight: true, coffee: true, plant: true },
+    branch: 'feature/3d-hearth',
+    activeSessionId: 'helios-ui',
+    room: { floor: 2, slot: 0, cluster: 'cursor' },
+    sessions: [
+      {
+        id: 'helios-ui',
+        title: '3D 记忆宫殿界面',
+        agentId: 'cursor',
+        status: 'replied',
+        unread: true,
+        lastGoal: '把 2D 房子改成可展开的 3D 建筑剖面。',
+        lastSummary: '已确认 Project 是房间，Session 是工作台；下一步实现收起和展开状态。',
+        updatedHoursAgo: 0.2,
+        desk: { slot: 0 },
+      },
+      {
+        id: 'helios-copy',
+        title: '概念汇报文案',
+        agentId: 'claude',
+        status: 'idle',
+        lastGoal: '整理一版可以向朋友解释 Hearth 的概念叙事。',
+        lastSummary: '重点放在注意力恢复，而不是多 Agent 技术接入。',
+        updatedHoursAgo: 5,
+        desk: { slot: 1 },
+      },
+      {
+        id: 'helios-build',
+        title: '构建基线检查',
+        agentId: 'codex',
+        status: 'running',
+        lastGoal: '恢复 TypeScript build，并隔离旧 2D 组件。',
+        lastSummary: '旧 House / Room 与新数据结构冲突，需要从真实入口图里移除。',
+        updatedHoursAgo: 0.6,
+        desk: { slot: 2 },
+      },
+    ],
   },
   {
     id: 'lumina',
     name: 'Lumina',
     vibe: '昨天动过',
-    agentId: 'cursor',
+    primaryAgentId: 'cursor',
     state: 'dormant',
     lastTouchedHoursAgo: 26,
     branch: 'main',
-    pos: { x: 35, y: 62 },
-    decor: { plant: true },
+    activeSessionId: 'lumina-review',
+    room: { floor: 1, slot: 0, cluster: 'cursor' },
+    sessions: [
+      {
+        id: 'lumina-review',
+        title: 'Onboarding 体验复盘',
+        agentId: 'cursor',
+        status: 'idle',
+        lastGoal: '找出新用户第一次打开项目时最困惑的三个点。',
+        lastSummary: '入口提示太像 demo，真实项目状态感不够强。',
+        updatedHoursAgo: 26,
+        desk: { slot: 0 },
+      },
+    ],
   },
-
-  // —— Codex 区（中右）
   {
     id: 'aurora',
     name: 'Aurora',
     vibe: '云端跑批中',
-    agentId: 'codex',
+    primaryAgentId: 'codex',
     state: 'active',
     lastTouchedHoursAgo: 1.5,
     branch: 'main',
-    pos: { x: 60, y: 42 },
-    decor: { skylight: true, plant: true },
+    activeSessionId: 'aurora-agent',
+    room: { floor: 2, slot: 1, cluster: 'codex' },
+    sessions: [
+      {
+        id: 'aurora-agent',
+        title: 'Agent 任务面板',
+        agentId: 'codex',
+        status: 'running',
+        lastGoal: '把并行任务压缩成适合扫视的状态卡片。',
+        lastSummary: '正在验证卡片排序规则：待回看优先，其次运行中，其次空闲。',
+        updatedHoursAgo: 1.5,
+        desk: { slot: 0 },
+      },
+      {
+        id: 'aurora-tests',
+        title: '测试失败摘要',
+        agentId: 'codex',
+        status: 'replied',
+        unread: true,
+        lastGoal: '定位 dashboard e2e 偶发失败。',
+        lastSummary: '失败更像等待状态未稳定，建议加显式网络 idle 检查。',
+        updatedHoursAgo: 0.8,
+        desk: { slot: 1 },
+      },
+    ],
   },
   {
     id: 'datamesh',
     name: 'DataMesh',
-    vibe: '积灰 2 周',
-    agentId: 'codex',
+    vibe: '积灰两周',
+    primaryAgentId: 'codex',
     state: 'dusty',
     lastTouchedHoursAgo: 24 * 14,
     branch: 'main',
-    pos: { x: 80, y: 78 },
-    decor: { coverSheets: true },
+    activeSessionId: 'datamesh-schema',
+    room: { floor: 1, slot: 1, cluster: 'codex' },
+    sessions: [
+      {
+        id: 'datamesh-schema',
+        title: 'Schema 迁移草案',
+        agentId: 'codex',
+        status: 'idle',
+        lastGoal: '确认用户事件表是否要拆成 append-only 日志。',
+        lastSummary: '还没有结论，风险主要在历史数据补齐和查询成本。',
+        updatedHoursAgo: 24 * 14,
+        desk: { slot: 0 },
+      },
+    ],
   },
-
-  // —— Manus 区（左下）
   {
     id: 'sandbox',
     name: 'Sandbox',
     vibe: '一次性试验',
-    agentId: 'manus',
+    primaryAgentId: 'manus',
     state: 'dormant',
     lastTouchedHoursAgo: 8,
-    pos: { x: 14, y: 80 },
-    decor: { plant: true },
+    activeSessionId: 'sandbox-spike',
+    room: { floor: 0, slot: 0, cluster: 'manus' },
+    sessions: [
+      {
+        id: 'sandbox-spike',
+        title: '拖拽手感实验',
+        agentId: 'manus',
+        status: 'running',
+        lastGoal: '试出房间展开时最不打扰的 hover 反馈。',
+        lastSummary: 'hover 只做预览，click 再展开，这条体验方向已确认。',
+        updatedHoursAgo: 8,
+        desk: { slot: 0 },
+      },
+    ],
   },
-
-  // —— Claude 区（右上）
   {
     id: 'polaris',
     name: 'Polaris',
     vibe: '反复推敲',
-    agentId: 'claude',
+    primaryAgentId: 'claude',
     state: 'active',
     lastTouchedHoursAgo: 3,
     branch: 'main',
-    pos: { x: 82, y: 20 },
-    decor: { chimney: true, coffee: true },
+    activeSessionId: 'polaris-brief',
+    room: { floor: 2, slot: 2, cluster: 'claude' },
+    sessions: [
+      {
+        id: 'polaris-brief',
+        title: '产品叙事审阅',
+        agentId: 'claude',
+        status: 'replied',
+        unread: true,
+        lastGoal: '压缩 Hearth 的一句话定位。',
+        lastSummary: '建议把产品说成“帮你回到项目房间，而不是回到聊天记录”。',
+        updatedHoursAgo: 3,
+        desk: { slot: 0 },
+      },
+    ],
   },
-
-  // —— 已结项（住在阁楼）
   {
     id: 'selene',
     name: 'Selene',
-    vibe: '3 个月前结项',
-    agentId: 'manus',
+    vibe: '三个月前结项',
+    primaryAgentId: 'manus',
     state: 'archived',
     lastTouchedHoursAgo: 24 * 90,
-    pos: { x: 25, y: 50 },
-    decor: { coverSheets: true },
-  },
-  {
-    id: 'orion',
-    name: 'Orion',
-    vibe: '半年前完工',
-    agentId: 'cursor',
-    state: 'archived',
-    lastTouchedHoursAgo: 24 * 180,
-    pos: { x: 55, y: 45 },
-    decor: { coverSheets: true },
-  },
-  {
-    id: 'vega',
-    name: 'Vega',
-    vibe: '一年没碰',
-    agentId: 'codex',
-    state: 'archived',
-    lastTouchedHoursAgo: 24 * 365,
-    pos: { x: 80, y: 55 },
-    decor: { coverSheets: true },
-  },
-];
-
-export type StickyNote = {
-  id: string;
-  text: string;
-  createdHoursAgo: number;
-  fade: number;
-};
-
-export const STICKY_NOTES: StickyNote[] = [
-  {
-    id: 'n1',
-    text: '想做一个把所有终端 history 喂给 LLM 的小工具',
-    createdHoursAgo: 6,
-    fade: 0.1,
-  },
-  {
-    id: 'n2',
-    text: 'Tom 说他在用 a16z 那个 dev productivity 报告',
-    createdHoursAgo: 18,
-    fade: 0.3,
-  },
-  {
-    id: 'n3',
-    text: '调研下 raycast 的 deeplink 协议',
-    createdHoursAgo: 36,
-    fade: 0.55,
+    activeSessionId: 'selene-archive',
+    room: { floor: 0, slot: 2, cluster: 'manus' },
+    sessions: [
+      {
+        id: 'selene-archive',
+        title: '归档记录',
+        agentId: 'manus',
+        status: 'archived',
+        lastGoal: '保留最终方案和未做清单。',
+        lastSummary: '项目已经盖上白布，只在展开沙盘里作为冷区出现。',
+        updatedHoursAgo: 24 * 90,
+        desk: { slot: 0 },
+      },
+    ],
   },
 ];
 
 export const CURRENT_PROJECT_ID = 'helios';
 
-/** 在两个项目之间是否要画一条"通路"（楼梯/走道）。
- * 简单规则：同一个 IDE 内部互相连通；以及同侧相邻 IDE 之间用一条主通道。
- */
-export function isProjectsConnected(a: Project, b: Project): boolean {
-  if (a.agentId === b.agentId) return true;
-  // 跨 IDE 主通道
-  const main = new Set(['helios', 'aurora', 'polaris']);
-  return main.has(a.id) && main.has(b.id);
+export function getProjectAttentionState(project: Project): ProjectAttentionState {
+  const litSessions = project.sessions.filter(
+    (session) => session.unread || session.status === 'replied',
+  );
+  const runningSessions = project.sessions.filter(
+    (session) => session.status === 'running',
+  );
+
+  return {
+    isLit: litSessions.length > 0,
+    isBreathing: litSessions.length === 0 && runningSessions.length > 0,
+    litSessions,
+    runningSessions,
+  };
+}
+
+export function getDefaultSession(project: Project): Session | undefined {
+  const attention = getProjectAttentionState(project);
+  return (
+    attention.litSessions[0] ??
+    project.sessions.find((session) => session.id === project.activeSessionId) ??
+    project.sessions[0]
+  );
 }

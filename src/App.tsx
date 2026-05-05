@@ -1,282 +1,106 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import { FloatingTower } from './components/FloatingTower';
-import { Palace, type WalkPhase } from './components/Palace';
-import { PROJECTS, CURRENT_PROJECT_ID, type Project } from './data/projects';
-
-type Stage = 'tower' | 'palace';
-
-const STALE_HOURS = 24 * 14;
+import { useEffect, useState } from 'react';
+import { Hearth3D } from './components/hearth3d/Hearth3D';
+import { CURRENT_PROJECT_ID, PROJECTS } from './data/projects';
 
 export default function App() {
-  const [stage, setStage] = useState<Stage>('tower');
-  const [projects, setProjects] = useState<Project[]>(PROJECTS);
   const [currentProjectId, setCurrentProjectId] = useState(CURRENT_PROJECT_ID);
-  const [phase, setPhase] = useState<WalkPhase>('idle');
-  const [walkTargetId, setWalkTargetId] = useState<string | null>(null);
-  const [autoAbsorb, setAutoAbsorb] =
-    useState<{ noteId: string; projectId: string } | null>(null);
-  const [caption, setCaption] = useState<string | null>(null);
-  const [autoPlaying, setAutoPlaying] = useState(false);
-  const arrivedTimer = useRef<number | null>(null);
-  const autoTimers = useRef<number[]>([]);
-
-  const current = projects.find((p) => p.id === currentProjectId) ?? projects[0] ?? PROJECTS[0];
-
-  const handleSelectRoom = useCallback(
-    (project: Project) => {
-      if (phase !== 'idle') return;
-      if (project.id === currentProjectId) return;
-      if (project.state === 'archived') return;
-      setWalkTargetId(project.id);
-      setPhase('walking');
-    },
-    [phase, currentProjectId],
-  );
-
-  const handleWalkComplete = useCallback(() => {
-    setPhase('arrived');
-    arrivedTimer.current = window.setTimeout(() => {
-      if (walkTargetId) setCurrentProjectId(walkTargetId);
-      setPhase('idle');
-      setWalkTargetId(null);
-      setStage('tower');
-    }, 1300);
-  }, [walkTargetId]);
+  const desktopMode = Boolean(window.hearthDesktop?.isDesktop);
 
   useEffect(() => {
-    return () => {
-      if (arrivedTimer.current) clearTimeout(arrivedTimer.current);
-      autoTimers.current.forEach(clearTimeout);
-    };
-  }, []);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && phase === 'idle' && !autoPlaying) {
-        setStage('tower');
-      }
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        if (phase !== 'idle' || autoPlaying) return;
-        setStage((s) => (s === 'tower' ? 'palace' : 'tower'));
+    const onKey = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [phase, autoPlaying]);
-
-  function startAutoPlay() {
-    if (autoPlaying) return;
-    setAutoPlaying(true);
-    setStage('tower');
-    setCurrentProjectId('helios');
-    setPhase('idle');
-    setWalkTargetId(null);
-
-    const schedule: Array<[number, () => void]> = [
-      [200, () => setCaption('你的当前位置只是顶栏一颗呼吸的光')],
-      [2400, () => setCaption('点击它，记忆宫殿在你眼前展开')],
-      [3000, () => setStage('palace')],
-      [4400, () =>
-        setCaption('每个 IDE 是一个色系，每个项目是一间房，气质自动生长'),
-      ],
-      [7800, () =>
-        setCaption('随手记的便签悬在空中，需要时再丢进哪个房间'),
-      ],
-      [10800, () => {
-        setAutoAbsorb({ noteId: 'n1', projectId: 'helios' });
-      }],
-      [11700, () => {
-        setAutoAbsorb(null);
-        setCaption('要切换工作？挑一间房间，看着自己穿过宫殿走过去');
-      }],
-      [14200, () => {
-        setWalkTargetId('aurora');
-        setPhase('walking');
-      }],
-      [15600, () => setCaption('穿越本身就是心理减速带，让大脑换频道')],
-      [17800, () => setCaption(null)],
-      [18800, () => {
-        setAutoPlaying(false);
-      }],
-    ];
-
-    autoTimers.current = schedule.map(([ms, fn]) =>
-      window.setTimeout(fn, ms),
-    );
-  }
-
-  function stopAutoPlay() {
-    autoTimers.current.forEach(clearTimeout);
-    autoTimers.current = [];
-    setAutoPlaying(false);
-    setCaption(null);
-    setAutoAbsorb(null);
-  }
-
-  const handleArchiveProject = useCallback((projectId: string) => {
-    setProjects((prev) =>
-      prev.map((p) => {
-        if (p.id !== projectId) return p;
-        if (p.id === currentProjectId) return p;
-        if (p.state === 'archived') return p;
-        return {
-          ...p,
-          state: 'archived',
-          decor: { ...p.decor, coverSheets: true },
-        };
-      }),
-    );
-  }, [currentProjectId]);
-
-  const handleAutoArchiveStale = useCallback(() => {
-    setProjects((prev) =>
-      prev.map((p) => {
-        if (p.id === currentProjectId) return p;
-        if (p.state === 'archived') return p;
-        if (p.lastTouchedHoursAgo < STALE_HOURS) return p;
-        return {
-          ...p,
-          state: 'archived',
-          decor: { ...p.decor, coverSheets: true },
-        };
-      }),
-    );
-  }, [currentProjectId]);
+  }, []);
 
   return (
-    <div className="relative h-full w-full overflow-hidden">
-      <FauxDesktop />
+    <div
+      className={[
+        'relative h-full w-full overflow-hidden',
+        desktopMode ? 'bg-transparent' : 'bg-hearth-bg',
+      ].join(' ')}
+    >
+      {!desktopMode && <FauxDesktop currentProjectId={currentProjectId} />}
 
-      <div className="pointer-events-none fixed inset-0 z-50 flex items-start justify-center pt-6">
-        <div className="pointer-events-auto">
-          <AnimatePresence mode="wait">
-            {stage === 'tower' ? (
-              <motion.div
-                key="tower"
-                initial={{ opacity: 0, y: -8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.25 }}
-              >
-                <FloatingTower
-                  projects={projects}
-                  currentProjectId={current.id}
-                  onSelectProject={(projectId) => {
-                    const p = projects.find((x) => x.id === projectId);
-                    if (!p || p.state === 'archived') return;
-                    setCurrentProjectId(projectId);
-                  }}
-                  onArchiveProject={handleArchiveProject}
-                  onAutoArchiveStale={handleAutoArchiveStale}
-                  onOpenPalace={() => setStage('palace')}
-                />
-              </motion.div>
-            ) : (
-              <motion.div
-                key="palace"
-                className="mt-8"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <Palace
-                  projects={projects}
-                  currentProjectId={currentProjectId}
-                  phase={phase}
-                  walkTargetId={walkTargetId}
-                  autoAbsorb={autoAbsorb}
-                  onClose={() => phase === 'idle' && setStage('tower')}
-                  onSelectRoom={handleSelectRoom}
-                  onWalkComplete={handleWalkComplete}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-
-      <AnimatePresence>
-        {caption && (
-          <motion.div
-            key={caption}
-            className="fixed left-1/2 -translate-x-1/2 bottom-20 z-40 pointer-events-none max-w-[90vw]"
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.4 }}
-          >
-            <div className="rounded-full border border-white/10 bg-black/65 backdrop-blur-md px-5 py-2 text-sm text-hearth-text-soft shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
-              {caption}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="fixed right-5 bottom-5 z-40 flex items-center gap-2">
-        <button
-          onClick={autoPlaying ? stopAutoPlay : startAutoPlay}
-          className="flex items-center gap-2 rounded-full border border-hearth-warm-soft/30 bg-black/60 backdrop-blur-md px-4 py-2 text-xs text-hearth-text-soft hover:border-hearth-warm-soft/60 hover:text-hearth-text transition-colors cursor-pointer"
-        >
-          {autoPlaying ? (
-            <>
-              <span className="block h-2 w-2 rounded-sm bg-hearth-warm" />
-              停止演示
-            </>
-          ) : (
-            <>
-              <span
-                className="block h-0 w-0"
-                style={{
-                  borderTop: '5px solid transparent',
-                  borderBottom: '5px solid transparent',
-                  borderLeft: '8px solid var(--color-hearth-warm)',
-                }}
-              />
-              自动演示
-            </>
-          )}
-        </button>
-      </div>
-
-      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-30 text-[11px] tracking-wider text-hearth-text-mute/60">
-        ⌘K 唤起 / 收起 · ESC 收起 · 拖动便签到房间
+      <div
+        className={[
+          'fixed inset-0 z-30 flex items-start justify-center',
+          desktopMode ? 'pt-0' : 'pt-7',
+        ].join(' ')}
+      >
+        <Hearth3D
+          projects={PROJECTS}
+          currentProjectId={currentProjectId}
+          onSelectProject={setCurrentProjectId}
+          desktopMode={desktopMode}
+        />
       </div>
     </div>
   );
 }
 
-function FauxDesktop() {
+function FauxDesktop({ currentProjectId }: { currentProjectId: string }) {
+  const currentProject = PROJECTS.find((project) => project.id === currentProjectId);
+
   return (
     <div className="absolute inset-0 -z-0">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,#2a2832_0%,#0c0a14_70%)]" />
-      <div className="absolute left-12 top-24 h-[70%] w-[60%] rounded-xl border border-white/5 bg-black/40 backdrop-blur-[2px] overflow-hidden opacity-50">
-        <div className="flex items-center gap-2 px-3 py-2 border-b border-white/5">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,#2b2834_0%,#0d0a15_72%)]" />
+      <div className="absolute left-10 top-20 h-[72%] w-[62%] overflow-hidden rounded-xl border border-white/6 bg-black/42 opacity-60 backdrop-blur-[2px]">
+        <div className="flex items-center gap-2 border-b border-white/6 px-3 py-2">
           <span className="h-3 w-3 rounded-full bg-red-400/60" />
           <span className="h-3 w-3 rounded-full bg-yellow-400/60" />
           <span className="h-3 w-3 rounded-full bg-green-400/60" />
-          <span className="ml-2 text-[11px] text-white/30">Helios — Cursor</span>
+          <span className="ml-2 text-[11px] text-white/35">
+            {currentProject?.name ?? 'Project'} - Cursor
+          </span>
         </div>
-        <div className="p-4 font-mono text-[11px] leading-relaxed text-white/30">
-          <div>// 这里是用户正在工作的 IDE</div>
-          <div>// 记忆宫殿只是顶部那颗药丸，并不抢走他们的视线</div>
-          <div className="mt-2 text-white/20">
-            export function expand() {'{'}
+        <div className="grid grid-cols-[180px_1fr] h-[calc(100%-37px)]">
+          <div className="border-r border-white/5 bg-black/24 p-4">
+            <div className="mb-5 h-3 w-24 rounded bg-white/10" />
+            <div className="space-y-2">
+              {['src', 'components', 'hearth3d', 'data', 'docs'].map((item, index) => (
+                <div key={item} className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-sm bg-hearth-warm/40" />
+                  <span
+                    className="h-2 rounded bg-white/10"
+                    style={{ width: 70 + index * 10 }}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="ml-4 text-white/20">return ...</div>
-          <div className="text-white/20">{'}'}</div>
+          <div className="p-5">
+            <div className="mb-4 h-4 w-52 rounded bg-white/10" />
+            <div className="space-y-3">
+              {Array.from({ length: 9 }, (_, index) => (
+                <div key={index} className="flex gap-2">
+                  <span className="h-3 w-10 rounded bg-hearth-cool/20" />
+                  <span
+                    className="h-3 rounded bg-white/8"
+                    style={{ width: `${55 + ((index * 19) % 36)}%` }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
-      <div className="absolute right-12 top-32 h-[55%] w-[28%] rounded-xl border border-white/5 bg-black/30 backdrop-blur-[2px] overflow-hidden opacity-40">
-        <div className="flex items-center gap-2 px-3 py-2 border-b border-white/5">
-          <span className="h-2 w-2 rounded-full bg-white/20" />
-          <span className="text-[10px] text-white/30">Codex Cloud</span>
+
+      <div className="absolute bottom-16 right-12 h-[52%] w-[36%] overflow-hidden rounded-xl border border-white/6 bg-black/32 opacity-45">
+        <div className="border-b border-white/6 px-4 py-2 text-[11px] text-white/25">
+          Agent session output
         </div>
-        <div className="p-3 text-[10px] text-white/30 leading-relaxed">
-          <div>● 正在分析依赖图...</div>
-          <div className="mt-2">● 已生成补丁草稿</div>
+        <div className="space-y-3 p-4">
+          {Array.from({ length: 7 }, (_, index) => (
+            <div key={index} className="rounded-lg border border-white/5 bg-white/[0.035] p-3">
+              <div className="mb-2 h-2 w-24 rounded bg-hearth-warm/20" />
+              <div className="h-2 w-full rounded bg-white/8" />
+              <div className="mt-2 h-2 w-2/3 rounded bg-white/8" />
+            </div>
+          ))}
         </div>
       </div>
     </div>
