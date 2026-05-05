@@ -18,10 +18,8 @@ export const SPACE = {
 export const SCENE = {
   collapsedZoom: 33,
   expandedZoom: 52,
-  selectedZoom: 64,
   collapsedCamera: [5.6, 4.5, 7.2] as const,
   expandedCamera: [8.2, 5.8, 9.6] as const,
-  selectedCamera: [7.2, 5.0, 8.2] as const,
 } as const;
 
 export const COLORS = {

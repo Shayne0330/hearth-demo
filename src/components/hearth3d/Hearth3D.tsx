@@ -242,12 +242,15 @@ export function Hearth3D({
         camera={{ position: [6.2, 4.7, 7.4], zoom: 33, near: 0.1, far: 100 }}
         gl={{ antialias: true, alpha: true }}
         style={{ background: 'transparent' }}
+        onPointerMissed={() => {
+          if (expanded) dispatch({ type: 'COLLAPSE' });
+        }}
       >
         <ambientLight intensity={1.25} />
         <directionalLight position={[5, 8, 6]} intensity={1.55} />
         <directionalLight position={[-4, 5, -3]} intensity={0.55} color="#9ed4c5" />
         <pointLight position={[-3, 3, 4]} intensity={0.55} color="#f4a85d" />
-        <CameraRig projects={projects} viewState={viewState} />
+        <CameraRig viewState={viewState} />
         {!expanded && <CollapsedBuildingIcon projects={projects} viewState={viewState} />}
         <BuildingModel
           projects={projects}
@@ -357,7 +360,7 @@ function ExpandedOverlay({
       </button>
       <div
         className={[
-          'absolute bottom-5 right-5 top-16 w-[min(360px,35vw)] rounded-3xl border border-white/55 px-6 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.28)] backdrop-blur-2xl',
+          'pointer-events-auto absolute bottom-5 right-5 top-16 w-[min(360px,35vw)] rounded-3xl border border-white/55 px-6 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.28)] backdrop-blur-2xl',
           desktopMode ? 'bg-[#efe4cf]/92' : 'bg-[#efe4cf]/88',
         ].join(' ')}
       >
