@@ -12,6 +12,7 @@ import type { HearthAction, HearthViewState } from './Hearth3D';
 import { createBuildingLayout, type RoomLayout } from './layout';
 import { COLORS, SPACE } from './spaceTokens';
 import { ProjectRoom3D } from './ProjectRoom3D';
+import { StructuralKit } from './StructuralKit';
 import { WindowLight } from './WindowLight';
 
 type BuildingModelProps = {
@@ -133,6 +134,7 @@ export function BuildingModel({
             onSelect={handleSelect}
           />
         ))}
+        {open && <StructuralKit rooms={layout.rooms} />}
       </group>
 
       <group ref={facadeRef}>
