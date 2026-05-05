@@ -63,12 +63,12 @@ export function SessionDesk3D({
           roughness={0.75}
         />
       </mesh>
-      <mesh position={[-0.2, SPACE.deskHeight + 0.13, -0.1]}>
-        <boxGeometry args={[0.22, 0.18, 0.035]} />
+      <mesh position={[-SPACE.deskWidth * 0.26, SPACE.deskHeight + 0.19, -SPACE.deskDepth * 0.2]}>
+        <boxGeometry args={[0.34, 0.26, 0.045]} />
         <meshStandardMaterial color="#15161b" roughness={0.36} />
       </mesh>
-      <mesh position={[-0.2, SPACE.deskHeight + 0.135, -0.079]}>
-        <boxGeometry args={[0.16, 0.105, 0.01]} />
+      <mesh position={[-SPACE.deskWidth * 0.26, SPACE.deskHeight + 0.197, -SPACE.deskDepth * 0.17]}>
+        <boxGeometry args={[0.24, 0.15, 0.012]} />
         <meshStandardMaterial
           color={agent.palette.dim}
           emissive={agent.palette.accent}

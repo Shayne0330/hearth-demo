@@ -95,12 +95,12 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
 
       {centerGround && rightTop && (
         <Staircase
-          x={centerGround.x + centerGround.width * 0.42}
+          x={centerGround.x + centerGround.width * 0.52}
           y={roomTopY(centerGround) + 0.08}
-          z={centerGround.z - centerGround.depth * 0.14}
+          z={roomFrontZ(centerGround) + 0.5}
           rise={rightTop.y - centerGround.y - 0.82}
-          runX={rightTop.x - centerGround.x - 0.92}
-          runZ={rightTop.z - centerGround.z - 0.18}
+          runX={rightTop.x - centerGround.x - 0.52}
+          runZ={roomFrontZ(rightTop) - roomFrontZ(centerGround) - 0.26}
         />
       )}
 
@@ -108,21 +108,21 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
         <Staircase
           x={leftGround.x + leftGround.width * 0.38}
           y={roomTopY(leftGround) + 0.08}
-          z={leftGround.z + leftGround.depth * 0.26}
+          z={roomFrontZ(leftGround) + 0.48}
           rise={middle.y - leftGround.y - 0.86}
-          runX={middle.x - leftGround.x - 0.78}
-          runZ={middle.z - leftGround.z - 0.38}
+          runX={middle.x - leftGround.x - 0.62}
+          runZ={roomFrontZ(middle) - roomFrontZ(leftGround) - 0.18}
         />
       )}
 
       {middle && leftTop && (
         <Staircase
-          x={middle.x - middle.width * 0.1}
+          x={middle.x - middle.width * 0.06}
           y={roomTopY(middle) + 0.08}
-          z={middle.z + middle.depth * 0.26}
+          z={roomFrontZ(middle) + 0.46}
           rise={leftTop.y - middle.y - 0.86}
           runX={leftTop.x - middle.x - 0.18}
-          runZ={leftTop.z - middle.z - 0.12}
+          runZ={roomFrontZ(leftTop) - roomFrontZ(middle) - 0.18}
         />
       )}
 

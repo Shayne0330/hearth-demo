@@ -36,16 +36,16 @@ export type BuildingLayout = {
 
 function getDeskPosition(slot: number, total: number) {
   const positions = total <= 1
-    ? [{ x: -0.68, z: 0.62 }]
+    ? [{ x: -0.42, z: 0.54 }]
     : total === 2
       ? [
-          { x: -1.02, z: 0.62 },
-          { x: -0.28, z: 0.72 },
+          { x: -0.76, z: 0.48 },
+          { x: 0.48, z: 0.58 },
         ]
       : [
-          { x: -1.14, z: 0.54 },
-          { x: -0.5, z: 0.74 },
-          { x: 0.14, z: 0.58 },
+          { x: -0.92, z: 0.34 },
+          { x: 0.26, z: 0.58 },
+          { x: -0.32, z: -0.24 },
         ];
   return positions[slot] ?? positions[positions.length - 1];
 }

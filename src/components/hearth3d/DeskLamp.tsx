@@ -38,7 +38,7 @@ export function DeskLamp({ session, glow, selected = false }: DeskLampProps) {
   });
 
   return (
-    <group position={[0.18, SPACE.deskHeight + 0.18, -0.08]}>
+    <group position={[SPACE.deskWidth * 0.28, SPACE.deskHeight + 0.14, -SPACE.deskDepth * 0.2]}>
       <mesh position={[0, SPACE.lampHeight * 0.28, 0]}>
         <cylinderGeometry args={[0.028, 0.028, SPACE.lampHeight * 0.56, 8]} />
         <meshStandardMaterial color={COLORS.lampOff} roughness={0.45} />
