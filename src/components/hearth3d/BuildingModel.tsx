@@ -73,9 +73,9 @@ export function BuildingModel({
       root.position.y = MathUtils.damp(root.position.y, open ? 0 : -0.15, 7, delta);
     }
     if (facade) {
-      facade.position.x = MathUtils.damp(facade.position.x, open ? -3.15 : 0, 6, delta);
-      facade.position.z = MathUtils.damp(facade.position.z, open ? 0.45 : 0, 6, delta);
-      facade.rotation.y = MathUtils.damp(facade.rotation.y, open ? -1.18 : 0, 6, delta);
+      facade.position.x = MathUtils.damp(facade.position.x, open ? -3.85 : 0, 6, delta);
+      facade.position.z = MathUtils.damp(facade.position.z, open ? 0.72 : 0, 6, delta);
+      facade.rotation.y = MathUtils.damp(facade.rotation.y, open ? -1.31 : 0, 6, delta);
     }
     if (rooms) {
       rooms.position.x = MathUtils.damp(rooms.position.x, open ? 0.85 : 0, 6, delta);
