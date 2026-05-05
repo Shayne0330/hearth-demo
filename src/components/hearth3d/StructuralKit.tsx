@@ -40,6 +40,7 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
   const rightGround = ground[2];
   const leftTop = top[0];
   const rightTop = top[1];
+  const exteriorZ = Math.max(...rooms.map(roomFrontZ)) + 0.74;
 
   return (
     <group>
@@ -93,36 +94,21 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
         </>
       )}
 
-      {centerGround && rightTop && (
-        <Staircase
-          x={centerGround.x + centerGround.width * 0.52}
-          y={roomTopY(centerGround) + 0.08}
-          z={roomFrontZ(centerGround) + 0.5}
-          rise={rightTop.y - centerGround.y - 0.82}
-          runX={rightTop.x - centerGround.x - 0.52}
-          runZ={roomFrontZ(rightTop) - roomFrontZ(centerGround) - 0.26}
+      {leftGround && (
+        <ExteriorStaircase
+          direction="upRight"
+          x={leftGround.x + leftGround.width * 0.42}
+          y={roomTopY(leftGround) + 0.1}
+          z={exteriorZ}
         />
       )}
 
-      {leftGround && middle && (
-        <Staircase
-          x={leftGround.x + leftGround.width * 0.38}
-          y={roomTopY(leftGround) + 0.08}
-          z={roomFrontZ(leftGround) + 0.48}
-          rise={middle.y - leftGround.y - 0.86}
-          runX={middle.x - leftGround.x - 0.62}
-          runZ={roomFrontZ(middle) - roomFrontZ(leftGround) - 0.18}
-        />
-      )}
-
-      {middle && leftTop && (
-        <Staircase
-          x={middle.x - middle.width * 0.06}
-          y={roomTopY(middle) + 0.08}
-          z={roomFrontZ(middle) + 0.46}
-          rise={leftTop.y - middle.y - 0.86}
-          runX={leftTop.x - middle.x - 0.18}
-          runZ={roomFrontZ(leftTop) - roomFrontZ(middle) - 0.18}
+      {middle && (
+        <ExteriorStaircase
+          direction="upLeft"
+          x={middle.x + middle.width * 0.44}
+          y={roomTopY(middle) + 0.12}
+          z={exteriorZ + 0.08}
         />
       )}
 
@@ -218,39 +204,38 @@ function HighSupportColumns({
   );
 }
 
-function Staircase({
+function ExteriorStaircase({
+  direction,
   x,
   y,
   z,
-  rise,
-  runX,
-  runZ,
 }: {
+  direction: 'upLeft' | 'upRight';
   x: number;
   y: number;
   z: number;
-  rise: number;
-  runX: number;
-  runZ: number;
 }) {
   const stepCount = 7;
+  const stepX = direction === 'upRight' ? 0.34 : -0.34;
+  const railX = stepX * (stepCount - 1) * 0.5;
+  const railWidth = Math.abs(stepX) * (stepCount - 1) + 0.48;
+
   return (
     <group>
       {Array.from({ length: stepCount }, (_, index) => {
-        const t = index / (stepCount - 1);
         return (
-          <mesh key={index} position={[x + runX * t, y + rise * t, z + runZ * t]}>
+          <mesh key={index} position={[x + stepX * index, y + 0.16 * index, z]}>
             <boxGeometry args={[0.52, 0.09, 0.34]} />
             <meshStandardMaterial color={COLORS.stone} roughness={0.64} />
           </mesh>
         );
       })}
-      <mesh position={[x + runX * 0.5, y + rise * 0.5 + 0.26, z + runZ * 0.5 + 0.24]}>
-        <boxGeometry args={[Math.max(0.8, Math.abs(runX) + 0.18), 0.055, 0.07]} />
+      <mesh position={[x + railX, y + 0.16 * (stepCount - 1) * 0.5 + 0.34, z + 0.24]}>
+        <boxGeometry args={[railWidth, 0.055, 0.07]} />
         <meshStandardMaterial color={COLORS.facadeTrim} roughness={0.46} />
       </mesh>
-      {[0, 0.5, 1].map((t) => (
-        <mesh key={t} position={[x + runX * t, y + rise * t + 0.14, z + runZ * t + 0.22]}>
+      {[0, 3, 6].map((index) => (
+        <mesh key={index} position={[x + stepX * index, y + 0.16 * index + 0.18, z + 0.22]}>
           <boxGeometry args={[0.05, 0.34, 0.05]} />
           <meshStandardMaterial color={COLORS.roofEdge} roughness={0.5} />
         </mesh>
