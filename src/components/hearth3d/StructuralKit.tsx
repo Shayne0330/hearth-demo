@@ -40,7 +40,7 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
   const rightGround = ground[2];
   const leftTop = top[0];
   const rightTop = top[1];
-  const exteriorZ = Math.max(...rooms.map(roomFrontZ)) + 0.58;
+  const exteriorZ = Math.max(...rooms.map(roomFrontZ)) + 0.72;
 
   return (
     <group>
@@ -74,41 +74,32 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
         />
       )}
 
-      {rightTop && rightGround && (
-        <>
-          <HighSupportColumns
-            x={rightTop.x}
-            z={roomFrontZ(rightGround) - 0.18}
-            bottomY={roomTopY(rightGround) + 0.06}
-            topY={roomBottomY(rightTop)}
-            width={rightTop.width}
-          />
-          <Railing
-            x={rightTop.x}
-            y={rightTop.y - rightTop.height / 2 + 0.2}
-            z={rightTop.z + rightTop.depth / 2 + 0.34}
-            width={rightTop.width * 0.86}
-            depth={0.48}
-            openSide="left"
-          />
-        </>
+      {rightTop && (
+        <Railing
+          x={rightTop.x}
+          y={rightTop.y - rightTop.height / 2 + 0.2}
+          z={rightTop.z + rightTop.depth / 2 + 0.34}
+          width={rightTop.width * 0.86}
+          depth={0.48}
+          openSide="left"
+        />
+      )}
+
+      {leftGround && (
+        <ExteriorStaircase
+          direction="upRight"
+          x={leftGround.x - leftGround.width * 0.5 - 0.28}
+          y={roomTopY(leftGround) + 0.1}
+          z={exteriorZ}
+        />
       )}
 
       {rightGround && (
         <ExteriorStaircase
-          direction="upRight"
-          x={rightGround.x + rightGround.width * 0.5}
-          y={roomTopY(rightGround) + 0.12}
-          z={roomFrontZ(rightGround) + 0.26}
-        />
-      )}
-
-      {middle && (
-        <ExteriorStaircase
           direction="upLeft"
-          x={middle.x - middle.width * 0.5}
-          y={roomTopY(middle) + 0.12}
-          z={exteriorZ}
+          x={rightGround.x + rightGround.width * 0.5 + 0.28}
+          y={roomTopY(rightGround) + 0.12}
+          z={exteriorZ + 0.08}
         />
       )}
 
