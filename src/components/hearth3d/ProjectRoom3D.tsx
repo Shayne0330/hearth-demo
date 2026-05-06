@@ -1,7 +1,8 @@
+import { Text } from '@react-three/drei';
 import type { ThreeEvent } from '@react-three/fiber';
 import { AGENTS, getProjectAttentionState } from '../../data/projects';
 import type { RoomLayout } from './layout';
-import { SPACE } from './spaceTokens';
+import { COLORS, SPACE } from './spaceTokens';
 import { SessionDesk3D } from './SessionDesk3D';
 
 type ProjectRoom3DProps = {
@@ -33,6 +34,7 @@ export function ProjectRoom3D({
   const dimmed = project.state === 'dusty' || project.state === 'dormant';
   const roomColor = selected || hovered ? agent.palette.wall : agent.palette.dim;
   const floorColor = project.state === 'dusty' ? '#d7e2d7' : agent.palette.floor;
+  const projectInitial = project.name.trim().charAt(0).toUpperCase();
 
   function handlePointerOver(event: ThreeEvent<PointerEvent>) {
     event.stopPropagation();
@@ -69,6 +71,16 @@ export function ProjectRoom3D({
         <boxGeometry args={[room.width, room.height, SPACE.wallThickness]} />
         <meshStandardMaterial color={roomColor} roughness={0.68} />
       </mesh>
+      <ProjectInitialMark
+        letter={projectInitial}
+        color={agent.palette.glow}
+        shadowColor={COLORS.roofEdge}
+        position={[
+          -room.width * 0.28,
+          room.height * 0.15,
+          -room.depth / 2 + SPACE.wallThickness / 2 + 0.026,
+        ]}
+      />
       <mesh position={[-room.width / 2, 0, 0]}>
         <boxGeometry args={[SPACE.wallThickness, room.height, room.depth]} />
         <meshStandardMaterial color={agent.palette.facade} roughness={0.7} />
@@ -127,6 +139,49 @@ export function ProjectRoom3D({
           emissiveIntensity={selected ? 0.35 : attention.isLit ? 0.18 : 0}
         />
       </mesh>
+    </group>
+  );
+}
+
+function ProjectInitialMark({
+  letter,
+  color,
+  shadowColor,
+  position,
+}: {
+  letter: string;
+  color: string;
+  shadowColor: string;
+  position: [number, number, number];
+}) {
+  if (!letter) return null;
+
+  return (
+    <group position={position}>
+      <Text
+        position={[0.035, -0.035, -0.004]}
+        fontSize={0.72}
+        anchorX="center"
+        anchorY="middle"
+        material-toneMapped={false}
+      >
+        {letter}
+        <meshStandardMaterial color={shadowColor} roughness={0.5} />
+      </Text>
+      <Text
+        fontSize={0.72}
+        anchorX="center"
+        anchorY="middle"
+        material-toneMapped={false}
+      >
+        {letter}
+        <meshStandardMaterial
+          color={color}
+          emissive={color}
+          emissiveIntensity={0.08}
+          roughness={0.44}
+        />
+      </Text>
     </group>
   );
 }
