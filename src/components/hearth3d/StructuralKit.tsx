@@ -86,20 +86,20 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
       )}
 
       {leftGround && (
-        <ExteriorStaircase
-          direction="upRight"
-          x={leftGround.x - leftGround.width * 0.5 + 0.2}
-          y={roomTopY(leftGround) + 0.66}
+        <ExteriorLadder
+          x={leftGround.x - leftGround.width * 0.5 + 0.52}
+          bottomY={roomTopY(leftGround) + 0.08}
+          topY={roomTopY(leftGround) + 1.22}
           z={exteriorZ}
         />
       )}
 
       {middle && centerGround && (
-        <ExteriorStaircase
-          direction="upLeft"
-          x={middle.x + middle.width * 0.5 + 0.66}
-          y={roomTopY(centerGround) + 0.42}
-          z={roomFrontZ(middle) + 0.38}
+        <ExteriorLadder
+          x={middle.x + middle.width * 0.5 + 0.78}
+          bottomY={roomTopY(centerGround) + 0.08}
+          topY={roomTopY(centerGround) + 1.08}
+          z={roomFrontZ(middle) + 0.42}
         />
       )}
 
@@ -195,42 +195,39 @@ function HighSupportColumns({
   );
 }
 
-function ExteriorStaircase({
-  direction,
+function ExteriorLadder({
   x,
-  y,
+  bottomY,
+  topY,
   z,
 }: {
-  direction: 'upLeft' | 'upRight';
   x: number;
-  y: number;
+  bottomY: number;
+  topY: number;
   z: number;
 }) {
-  const stepCount = 5;
-  const stepX = direction === 'upRight' ? 0.26 : -0.26;
-  const railX = stepX * (stepCount - 1) * 0.5;
-  const railWidth = Math.abs(stepX) * (stepCount - 1) + 0.48;
+  const height = Math.max(0.5, topY - bottomY);
+  const rungCount = 5;
+  const railGap = 0.34;
+  const railY = bottomY + height / 2;
 
   return (
-    <group>
-      {Array.from({ length: stepCount }, (_, index) => {
-        return (
-          <mesh key={index} position={[x + stepX * index, y + 0.13 * index, z]}>
-            <boxGeometry args={[0.44, 0.08, 0.3]} />
-            <meshStandardMaterial color={COLORS.stone} roughness={0.64} />
-          </mesh>
-        );
-      })}
-      <mesh position={[x + railX, y + 0.13 * (stepCount - 1) * 0.5 + 0.3, z + 0.22]}>
-        <boxGeometry args={[railWidth, 0.055, 0.07]} />
-        <meshStandardMaterial color={COLORS.facadeTrim} roughness={0.46} />
-      </mesh>
-      {[0, 2, 4].map((index) => (
-        <mesh key={index} position={[x + stepX * index, y + 0.13 * index + 0.16, z + 0.2]}>
-          <boxGeometry args={[0.05, 0.34, 0.05]} />
+    <group position={[x, 0, z]}>
+      {[-railGap / 2, railGap / 2].map((offset) => (
+        <mesh key={offset} position={[offset, railY, 0]}>
+          <boxGeometry args={[0.055, height, 0.055]} />
           <meshStandardMaterial color={COLORS.roofEdge} roughness={0.5} />
         </mesh>
       ))}
+      {Array.from({ length: rungCount }, (_, index) => {
+        const t = index / (rungCount - 1);
+        return (
+          <mesh key={index} position={[0, bottomY + height * t, 0.03]}>
+            <boxGeometry args={[railGap + 0.16, 0.045, 0.055]} />
+            <meshStandardMaterial color={COLORS.facadeTrim} roughness={0.48} />
+          </mesh>
+        );
+      })}
     </group>
   );
 }
