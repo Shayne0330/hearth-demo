@@ -35,8 +35,8 @@ export type BuildingLayout = {
 };
 
 const DESK_CUTAWAY_OFFSET = {
-  x: -0.22,
-  z: 0.24,
+  x: -0.62,
+  z: 0.52,
 } as const;
 
 function getDeskPosition(slot: number, total: number) {
