@@ -35,7 +35,7 @@ export type BuildingLayout = {
 };
 
 const DESK_CUTAWAY_OFFSET = {
-  x: -0.46,
+  x: -0.3,
   z: 0.52,
 } as const;
 
