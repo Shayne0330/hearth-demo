@@ -235,7 +235,7 @@ export function Hearth3D({
       ].join(' ')}
     >
       {expanded && !desktopMode && (
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_48%_42%,rgba(54,47,64,0.88)_0%,rgba(16,13,22,0.92)_62%,rgba(8,6,12,0.96)_100%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_48%_42%,rgba(239,252,255,0.9)_0%,rgba(198,239,245,0.84)_58%,rgba(87,174,233,0.62)_100%)]" />
       )}
       <Canvas
         orthographic
@@ -246,10 +246,10 @@ export function Hearth3D({
           if (expanded) dispatch({ type: 'COLLAPSE' });
         }}
       >
-        <ambientLight intensity={1.25} />
-        <directionalLight position={[5, 8, 6]} intensity={1.55} />
-        <directionalLight position={[-4, 5, -3]} intensity={0.55} color="#9ed4c5" />
-        <pointLight position={[-3, 3, 4]} intensity={0.55} color="#f4a85d" />
+        <ambientLight intensity={1.55} />
+        <directionalLight position={[5, 8, 6]} intensity={1.72} />
+        <directionalLight position={[-4, 5, -3]} intensity={0.7} color="#8bd8ff" />
+        <pointLight position={[-3, 3, 4]} intensity={0.58} color="#ff7eaa" />
         <CameraRig viewState={viewState} />
         {!expanded && <CollapsedBuildingIcon projects={projects} viewState={viewState} />}
         <BuildingModel
@@ -361,15 +361,15 @@ function ExpandedOverlay({
       {project && session && agent && (
         <div
           className={[
-            'pointer-events-auto absolute bottom-5 right-5 top-16 w-[min(360px,35vw)] rounded-3xl border border-white/55 px-6 py-8 shadow-[0_24px_80px_rgba(0,0,0,0.28)] backdrop-blur-2xl',
-            desktopMode ? 'bg-[#efe4cf]/92' : 'bg-[#efe4cf]/88',
+            'pointer-events-auto absolute bottom-5 right-5 top-16 w-[min(360px,35vw)] rounded-3xl border border-[#57aee9]/35 px-6 py-8 shadow-[0_24px_80px_rgba(22,50,79,0.18)] backdrop-blur-2xl',
+            desktopMode ? 'bg-[#effcff]/94' : 'bg-[#effcff]/90',
           ].join(' ')}
         >
           <>
             <div className="flex items-center justify-between gap-3">
               <div>
-                <div className="text-2xl font-medium text-[#2d241d]">{project.name}</div>
-                <div className="mt-0.5 text-[11px] text-[#78634f]">
+                <div className="text-2xl font-medium text-[#17324f]">{project.name}</div>
+                <div className="mt-0.5 text-[11px] text-[#2f6d98]">
                   {agent.name} · {project.branch ?? 'main'} · {project.vibe}
                 </div>
               </div>
@@ -381,23 +381,23 @@ function ExpandedOverlay({
                 }}
               />
             </div>
-            <div className="mt-8 border-t border-[#7a5a37]/18 pt-6">
-              <div className="text-[11px] uppercase tracking-[0.22em] text-[#806848]">
+            <div className="mt-8 border-t border-[#57aee9]/24 pt-6">
+              <div className="text-[11px] uppercase tracking-[0.22em] text-[#ee6c9e]">
                 Session 工作台
               </div>
-              <div className="mt-1 text-sm font-semibold text-[#5f452c]">
+              <div className="mt-1 text-sm font-semibold text-[#17324f]">
                 {session.title}
               </div>
-              <div className="mt-4 text-[11px] leading-relaxed text-[#806848]">
+              <div className="mt-4 text-[11px] leading-relaxed text-[#2f6d98]">
                 上一次目标
               </div>
-              <div className="mt-1 text-sm leading-relaxed text-[#2f261f]">
+              <div className="mt-1 text-sm leading-relaxed text-[#17324f]">
                 {session.lastGoal}
               </div>
-              <div className="mt-4 text-[11px] leading-relaxed text-[#806848]">
+              <div className="mt-4 text-[11px] leading-relaxed text-[#2f6d98]">
                 最近会话
               </div>
-              <div className="mt-1 text-sm leading-relaxed text-[#43362b]">
+              <div className="mt-1 text-sm leading-relaxed text-[#21466b]">
                 {session.lastSummary}
               </div>
             </div>

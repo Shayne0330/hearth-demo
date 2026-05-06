@@ -65,7 +65,7 @@ export function SessionDesk3D({
       </mesh>
       <mesh position={[-SPACE.deskWidth * 0.26, SPACE.deskHeight + 0.19, -SPACE.deskDepth * 0.2]}>
         <boxGeometry args={[0.34, 0.26, 0.045]} />
-        <meshStandardMaterial color="#15161b" roughness={0.36} />
+        <meshStandardMaterial color={COLORS.roofEdge} roughness={0.36} />
       </mesh>
       <mesh position={[-SPACE.deskWidth * 0.26, SPACE.deskHeight + 0.197, -SPACE.deskDepth * 0.17]}>
         <boxGeometry args={[0.24, 0.15, 0.012]} />

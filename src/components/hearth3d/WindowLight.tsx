@@ -45,7 +45,7 @@ export function WindowLight({
         <boxGeometry args={[SPACE.windowWidth, SPACE.windowHeight, 0.035]} />
         <meshStandardMaterial
           ref={materialRef}
-          color={lit || breathing ? color : '#2a2524'}
+          color={lit || breathing ? color : COLORS.roofEdge}
           emissive={glow}
           emissiveIntensity={0}
           roughness={0.42}

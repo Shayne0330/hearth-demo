@@ -32,7 +32,7 @@ export function ProjectRoom3D({
   const selected = selectedProjectId === project.id;
   const dimmed = project.state === 'dusty' || project.state === 'dormant';
   const roomColor = selected || hovered ? agent.palette.wall : agent.palette.dim;
-  const floorColor = project.state === 'dusty' ? '#473e39' : agent.palette.floor;
+  const floorColor = project.state === 'dusty' ? '#d7e2d7' : agent.palette.floor;
 
   function handlePointerOver(event: ThreeEvent<PointerEvent>) {
     event.stopPropagation();
@@ -71,11 +71,11 @@ export function ProjectRoom3D({
       </mesh>
       <mesh position={[-room.width / 2, 0, 0]}>
         <boxGeometry args={[SPACE.wallThickness, room.height, room.depth]} />
-        <meshStandardMaterial color={COLORS.roomBack} roughness={0.7} />
+        <meshStandardMaterial color={agent.palette.facade} roughness={0.7} />
       </mesh>
       <mesh position={[room.width / 2, 0, 0]}>
         <boxGeometry args={[SPACE.wallThickness, room.height, room.depth]} />
-        <meshStandardMaterial color={COLORS.roomBack} roughness={0.7} />
+        <meshStandardMaterial color={agent.palette.dim} roughness={0.7} />
       </mesh>
       <mesh position={[0, room.height / 2, 0]}>
         <boxGeometry args={[room.width, SPACE.floorThickness, room.depth]} />
@@ -94,7 +94,7 @@ export function ProjectRoom3D({
       {project.state === 'dusty' && expanded && (
         <mesh position={[0, -SPACE.roomHeight / 2 + 0.09, 0.05]}>
           <boxGeometry args={[room.width * 0.76, 0.018, room.depth * 0.54]} />
-          <meshStandardMaterial color="#d8d0bd" transparent opacity={0.22} />
+          <meshStandardMaterial color="#fff1b4" transparent opacity={0.3} />
         </mesh>
       )}
 
@@ -122,7 +122,7 @@ export function ProjectRoom3D({
       <mesh position={[0, -SPACE.roomHeight / 2 + 0.012, room.depth / 2 - 0.02]}>
         <boxGeometry args={[room.width * 0.22, 0.026, 0.12]} />
         <meshStandardMaterial
-          color={selected ? agent.palette.accent : dimmed ? '#5a5149' : agent.palette.glow}
+          color={selected ? agent.palette.accent : dimmed ? agent.palette.dim : agent.palette.glow}
           emissive={agent.palette.glow}
           emissiveIntensity={selected ? 0.35 : attention.isLit ? 0.18 : 0}
         />

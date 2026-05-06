@@ -194,7 +194,7 @@ function SteppedFacade({
       ))}
       <mesh position={[0, topFloorY + SPACE.roomHeight / 2 + 0.76, z - 0.36]}>
         <boxGeometry args={[2.65, 0.1, 1.08]} />
-        <meshStandardMaterial color="#5f8f90" roughness={0.34} metalness={0.08} />
+        <meshStandardMaterial color={AGENTS.cursor.palette.wall} roughness={0.34} metalness={0.08} />
       </mesh>
       <mesh position={[0.82, topFloorY + SPACE.roomHeight / 2 + 1.0, z - 0.66]}>
         <cylinderGeometry args={[0.11, 0.11, 0.52, 14]} />
@@ -303,7 +303,7 @@ function FacadeRoomOrnaments({
             <mesh position={[0, 0, -0.01]}>
               <circleGeometry args={[0.095, 20]} />
               <meshStandardMaterial
-                color="#203332"
+                color={COLORS.roofEdge}
                 emissive={AGENTS.codex.palette.glow}
                 emissiveIntensity={0.16}
               />

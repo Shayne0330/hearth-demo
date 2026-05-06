@@ -341,7 +341,7 @@ function Planter({
         </mesh>
         <mesh position={[0, 0.18, 0]}>
           <cylinderGeometry args={[0.07, 0.09, 0.42, 10]} />
-          <meshStandardMaterial color="#7b4a2d" roughness={0.7} />
+          <meshStandardMaterial color={COLORS.copper} roughness={0.7} />
         </mesh>
         <mesh position={[0, 0.55, 0]}>
           <sphereGeometry args={[0.28, 14, 10]} />
@@ -349,7 +349,7 @@ function Planter({
         </mesh>
         <mesh position={[-0.18, 0.46, 0.04]}>
           <sphereGeometry args={[0.2, 12, 8]} />
-          <meshStandardMaterial color="#d08a45" roughness={0.76} />
+          <meshStandardMaterial color={COLORS.copper} roughness={0.76} />
         </mesh>
         <mesh position={[0.17, 0.48, -0.02]}>
           <sphereGeometry args={[0.19, 12, 8]} />
@@ -372,15 +372,15 @@ function Planter({
         </mesh>
         <mesh position={[0.02, 0.18, 0.02]}>
           <sphereGeometry args={[0.1, 10, 8]} />
-          <meshStandardMaterial color="#d08a45" roughness={0.76} />
+          <meshStandardMaterial color={COLORS.copper} roughness={0.76} />
         </mesh>
         <mesh position={[0.22, 0.09, 0.28]}>
           <boxGeometry args={[0.56, 0.08, 0.14]} />
-          <meshStandardMaterial color="#8b5a35" roughness={0.62} />
+          <meshStandardMaterial color={COLORS.desk} roughness={0.62} />
         </mesh>
         <mesh position={[0.22, 0.2, 0.37]} rotation={[0.32, 0, 0]}>
           <boxGeometry args={[0.56, 0.06, 0.18]} />
-          <meshStandardMaterial color="#8b5a35" roughness={0.62} />
+          <meshStandardMaterial color={COLORS.desk} roughness={0.62} />
         </mesh>
         {[-0.03, 0.47].map((offset) => (
           <mesh key={offset} position={[offset, 0.005, 0.28]}>
@@ -401,7 +401,7 @@ function Planter({
       {[-0.16, 0, 0.16].map((offset, index) => (
         <mesh key={offset} position={[offset, 0.13 + index * 0.02, 0]}>
           <sphereGeometry args={[0.105, 10, 8]} />
-          <meshStandardMaterial color={index === 1 ? '#d08a45' : COLORS.foliage} roughness={0.76} />
+          <meshStandardMaterial color={index === 1 ? COLORS.copper : COLORS.foliage} roughness={0.76} />
         </mesh>
       ))}
     </group>

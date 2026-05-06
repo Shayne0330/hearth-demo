@@ -91,7 +91,7 @@ function Base() {
       </mesh>
       <mesh position={[0.12, -1.56, -0.2]}>
         <boxGeometry args={[4.7, 0.08, 1.62]} />
-        <meshStandardMaterial color="#7a6a5b" roughness={0.72} />
+        <meshStandardMaterial color={COLORS.ground} roughness={0.72} />
       </mesh>
       <mesh position={[0.26, -1.66, -0.34]}>
         <boxGeometry args={[4.94, 0.05, 1.86]} />
@@ -106,7 +106,7 @@ function BackServiceWall() {
     <group position={[-1.96, -0.02, -0.64]}>
       <mesh>
         <boxGeometry args={[0.24, 2.7, 0.3]} />
-        <meshStandardMaterial color="#4a2a25" roughness={0.76} />
+        <meshStandardMaterial color={COLORS.roomBack} roughness={0.76} />
       </mesh>
       <mesh position={[0, 1.42, 0.08]} rotation={[0, 0, -0.18]}>
         <boxGeometry args={[0.32, 0.72, 0.36]} />
@@ -124,8 +124,8 @@ function BackServiceWall() {
 
 function IconRoomBlock({ room }: { room: IconRoom }) {
   const agent = room.project ? AGENTS[room.project.primaryAgentId] : AGENTS.cursor;
-  const wallColor = room.project ? agent.palette.facade : '#4b302b';
-  const sideColor = room.project ? agent.palette.dim : '#2c2024';
+  const wallColor = room.project ? agent.palette.facade : AGENTS.cursor.palette.facade;
+  const sideColor = room.project ? agent.palette.dim : AGENTS.cursor.palette.dim;
 
   return (
     <group position={[room.x, room.y, room.z]}>
@@ -173,7 +173,7 @@ function SkyTerrace() {
     <group position={[-0.02, 1.43, -0.24]}>
       <mesh position={[0, 0, 0]}>
         <boxGeometry args={[2.5, 0.1, 0.78]} />
-        <meshStandardMaterial color="#6e9fa0" roughness={0.42} metalness={0.04} />
+        <meshStandardMaterial color={AGENTS.cursor.palette.wall} roughness={0.42} metalness={0.04} />
       </mesh>
       <mesh position={[-1.02, 0.16, 0.16]}>
         <sphereGeometry args={[0.15, 14, 10]} />
@@ -181,7 +181,7 @@ function SkyTerrace() {
       </mesh>
       <mesh position={[-0.78, 0.17, 0.1]}>
         <sphereGeometry args={[0.12, 14, 10]} />
-        <meshStandardMaterial color="#d08a45" roughness={0.76} />
+        <meshStandardMaterial color={AGENTS.manus.palette.accent} roughness={0.76} />
       </mesh>
       <mesh position={[0.96, 0.24, -0.1]}>
         <cylinderGeometry args={[0.08, 0.08, 0.48, 14]} />
@@ -202,7 +202,7 @@ function IconWindow({ room }: { room: IconRoom }) {
   const lit = Boolean(attention?.isLit);
   const breathing = Boolean(attention?.isBreathing);
   const counts = getSessionCounts(project);
-  const glow = lit ? agent.palette.glow : breathing ? agent.palette.accent : '#2f2925';
+  const glow = lit ? agent.palette.glow : breathing ? agent.palette.accent : COLORS.slabEdge;
   const emissiveIntensity = lit ? 0.9 : breathing ? 0.18 : 0.02;
   const faceZ = 0.24;
 
@@ -254,7 +254,7 @@ function IconWindow({ room }: { room: IconRoom }) {
           {[-0.2, 0, 0.2].map((x) => (
             <mesh key={x} position={[x, 0.1, 0.07]}>
               <boxGeometry args={[0.026, 0.18, 0.026]} />
-              <meshStandardMaterial color="#171b2b" roughness={0.5} />
+              <meshStandardMaterial color={COLORS.roofEdge} roughness={0.5} />
             </mesh>
           ))}
         </group>
