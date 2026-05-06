@@ -40,7 +40,7 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
   const rightGround = ground[2];
   const leftTop = top[0];
   const rightTop = top[1];
-  const exteriorZ = Math.max(...rooms.map(roomFrontZ)) + 0.74;
+  const exteriorZ = Math.max(...rooms.map(roomFrontZ)) + 0.58;
 
   return (
     <group>
@@ -64,22 +64,22 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
         </>
       )}
 
-      {leftTop && (
+      {leftTop && leftGround && (
         <HighSupportColumns
           x={leftTop.x}
-          z={leftTop.z + leftTop.depth / 2 - 0.2}
-          bottomY={SPACE.roomHeight / 2 + 0.08}
+          z={roomFrontZ(leftGround) - 0.18}
+          bottomY={roomTopY(leftGround) + 0.06}
           topY={roomBottomY(leftTop)}
           width={leftTop.width}
         />
       )}
 
-      {rightTop && (
+      {rightTop && rightGround && (
         <>
           <HighSupportColumns
             x={rightTop.x}
-            z={rightTop.z + rightTop.depth / 2 - 0.18}
-            bottomY={SPACE.roomHeight / 2 + 0.08}
+            z={roomFrontZ(rightGround) - 0.18}
+            bottomY={roomTopY(rightGround) + 0.06}
             topY={roomBottomY(rightTop)}
             width={rightTop.width}
           />
@@ -94,21 +94,21 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
         </>
       )}
 
-      {leftGround && (
+      {rightGround && (
         <ExteriorStaircase
           direction="upRight"
-          x={leftGround.x + leftGround.width * 0.42}
-          y={roomTopY(leftGround) + 0.1}
-          z={exteriorZ}
+          x={rightGround.x + rightGround.width * 0.5}
+          y={roomTopY(rightGround) + 0.12}
+          z={roomFrontZ(rightGround) + 0.26}
         />
       )}
 
       {middle && (
         <ExteriorStaircase
           direction="upLeft"
-          x={middle.x + middle.width * 0.44}
+          x={middle.x - middle.width * 0.5}
           y={roomTopY(middle) + 0.12}
-          z={exteriorZ + 0.08}
+          z={exteriorZ}
         />
       )}
 
@@ -215,8 +215,8 @@ function ExteriorStaircase({
   y: number;
   z: number;
 }) {
-  const stepCount = 7;
-  const stepX = direction === 'upRight' ? 0.34 : -0.34;
+  const stepCount = 5;
+  const stepX = direction === 'upRight' ? 0.26 : -0.26;
   const railX = stepX * (stepCount - 1) * 0.5;
   const railWidth = Math.abs(stepX) * (stepCount - 1) + 0.48;
 
@@ -224,18 +224,18 @@ function ExteriorStaircase({
     <group>
       {Array.from({ length: stepCount }, (_, index) => {
         return (
-          <mesh key={index} position={[x + stepX * index, y + 0.16 * index, z]}>
-            <boxGeometry args={[0.52, 0.09, 0.34]} />
+          <mesh key={index} position={[x + stepX * index, y + 0.13 * index, z]}>
+            <boxGeometry args={[0.44, 0.08, 0.3]} />
             <meshStandardMaterial color={COLORS.stone} roughness={0.64} />
           </mesh>
         );
       })}
-      <mesh position={[x + railX, y + 0.16 * (stepCount - 1) * 0.5 + 0.34, z + 0.24]}>
+      <mesh position={[x + railX, y + 0.13 * (stepCount - 1) * 0.5 + 0.3, z + 0.22]}>
         <boxGeometry args={[railWidth, 0.055, 0.07]} />
         <meshStandardMaterial color={COLORS.facadeTrim} roughness={0.46} />
       </mesh>
-      {[0, 3, 6].map((index) => (
-        <mesh key={index} position={[x + stepX * index, y + 0.16 * index + 0.18, z + 0.22]}>
+      {[0, 2, 4].map((index) => (
+        <mesh key={index} position={[x + stepX * index, y + 0.13 * index + 0.16, z + 0.2]}>
           <boxGeometry args={[0.05, 0.34, 0.05]} />
           <meshStandardMaterial color={COLORS.roofEdge} roughness={0.5} />
         </mesh>
