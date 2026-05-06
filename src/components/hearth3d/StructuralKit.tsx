@@ -40,7 +40,7 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
   const rightGround = ground[2];
   const leftTop = top[0];
   const rightTop = top[1];
-  const exteriorZ = Math.max(...rooms.map(roomFrontZ)) + 0.72;
+  const exteriorZ = Math.max(...rooms.map(roomFrontZ)) + 0.94;
 
   return (
     <group>
@@ -94,12 +94,12 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
         />
       )}
 
-      {rightGround && (
+      {middle && centerGround && (
         <ExteriorStaircase
           direction="upLeft"
-          x={rightGround.x + rightGround.width * 0.5 + 0.28}
-          y={roomTopY(rightGround) + 0.12}
-          z={exteriorZ + 0.08}
+          x={middle.x + middle.width * 0.5 + 0.24}
+          y={roomTopY(centerGround) + 0.12}
+          z={exteriorZ - 0.16}
         />
       )}
 
