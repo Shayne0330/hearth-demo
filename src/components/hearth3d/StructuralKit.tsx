@@ -88,8 +88,8 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
       {leftGround && (
         <ExteriorStaircase
           direction="upRight"
-          x={leftGround.x - leftGround.width * 0.5 - 0.28}
-          y={roomTopY(leftGround) + 0.42}
+          x={leftGround.x - leftGround.width * 0.5 + 0.2}
+          y={roomTopY(leftGround) + 0.66}
           z={exteriorZ}
         />
       )}
@@ -97,7 +97,7 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
       {middle && centerGround && (
         <ExteriorStaircase
           direction="upLeft"
-          x={middle.x + middle.width * 0.5 + 0.24}
+          x={middle.x + middle.width * 0.5 + 0.66}
           y={roomTopY(centerGround) + 0.42}
           z={roomFrontZ(middle) + 0.38}
         />
