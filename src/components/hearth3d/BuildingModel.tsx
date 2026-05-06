@@ -249,7 +249,7 @@ function FacadeRoomPanel({ room, z }: { room: RoomLayout; z: number }) {
       </mesh>
       <mesh position={[0, room.height / 2 + 0.12, 0.02]} rotation={[0.08, 0, 0]}>
         <boxGeometry args={[room.width + 0.42, 0.26, 0.34]} />
-        <meshStandardMaterial color={COLORS.roof} roughness={0.5} metalness={0.08} />
+        <meshStandardMaterial color={agent.palette.floor} roughness={0.5} metalness={0.04} />
       </mesh>
       <mesh position={[0, room.height / 2 - 0.08, 0.1]}>
         <boxGeometry args={[room.width + 0.3, 0.08, 0.14]} />

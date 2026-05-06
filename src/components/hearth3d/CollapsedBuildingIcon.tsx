@@ -126,6 +126,7 @@ function IconRoomBlock({ room }: { room: IconRoom }) {
   const agent = room.project ? AGENTS[room.project.primaryAgentId] : AGENTS.cursor;
   const wallColor = room.project ? agent.palette.facade : AGENTS.cursor.palette.facade;
   const sideColor = room.project ? agent.palette.dim : AGENTS.cursor.palette.dim;
+  const capColor = room.project ? agent.palette.floor : AGENTS.cursor.palette.floor;
 
   return (
     <group position={[room.x, room.y, room.z]}>
@@ -144,7 +145,7 @@ function IconRoomBlock({ room }: { room: IconRoom }) {
       </mesh>
       <mesh position={[0, room.height / 2 + 0.07, 0.02]}>
         <boxGeometry args={[room.width + 0.18, 0.12, 0.6]} />
-        <meshStandardMaterial color={COLORS.roof} roughness={0.5} metalness={0.06} />
+        <meshStandardMaterial color={capColor} roughness={0.5} metalness={0.04} />
       </mesh>
       <mesh position={[0, room.height / 2 + 0.15, 0.18]}>
         <boxGeometry args={[room.width + 0.08, 0.06, 0.22]} />

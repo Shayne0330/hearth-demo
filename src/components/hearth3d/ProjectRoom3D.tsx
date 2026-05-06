@@ -1,7 +1,7 @@
 import type { ThreeEvent } from '@react-three/fiber';
 import { AGENTS, getProjectAttentionState } from '../../data/projects';
 import type { RoomLayout } from './layout';
-import { COLORS, SPACE } from './spaceTokens';
+import { SPACE } from './spaceTokens';
 import { SessionDesk3D } from './SessionDesk3D';
 
 type ProjectRoom3DProps = {
@@ -79,7 +79,7 @@ export function ProjectRoom3D({
       </mesh>
       <mesh position={[0, room.height / 2, 0]}>
         <boxGeometry args={[room.width, SPACE.floorThickness, room.depth]} />
-        <meshStandardMaterial color={COLORS.slab} roughness={0.74} />
+        <meshStandardMaterial color={floorColor} roughness={0.74} />
       </mesh>
 
       {(selected || hovered || attention.isLit) && (
