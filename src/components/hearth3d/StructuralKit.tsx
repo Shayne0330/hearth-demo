@@ -33,6 +33,10 @@ function roomFrontZ(room: RoomLayout) {
   return room.z + room.depth / 2;
 }
 
+function getShortSupportHeight() {
+  return SPACE.floorHeight - SPACE.roomHeight - 0.1;
+}
+
 export function StructuralKit({ rooms }: StructuralKitProps) {
   const { ground, middle, top } = getRoomsByTier(rooms);
   const leftGround = ground[0];
@@ -40,6 +44,7 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
   const rightGround = ground[2];
   const leftTop = top[0];
   const rightTop = top[1];
+  const ladderHeight = SPACE.roomHeight + getShortSupportHeight();
 
   return (
     <group>
@@ -88,7 +93,7 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
         <ExteriorLadder
           x={leftGround.x + leftGround.width * 0.5 + 0.08}
           bottomY={roomTopY(leftGround) + 0.08}
-          topY={roomTopY(leftGround) + 1.26}
+          topY={roomTopY(leftGround) + 0.08 + ladderHeight}
           z={roomFrontZ(leftGround) + 0.08}
         />
       )}
@@ -97,7 +102,7 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
         <ExteriorLadder
           x={rightGround.x - rightGround.width * 0.5 + 0.12}
           bottomY={roomTopY(rightGround) + 0.08}
-          topY={roomTopY(rightGround) + 1.1}
+          topY={roomTopY(rightGround) + 0.08 + ladderHeight}
           z={roomFrontZ(rightGround) + 0.16}
         />
       )}
