@@ -40,7 +40,6 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
   const rightGround = ground[2];
   const leftTop = top[0];
   const rightTop = top[1];
-  const exteriorZ = Math.max(...rooms.map(roomFrontZ)) + 0.94;
 
   return (
     <group>
@@ -87,19 +86,19 @@ export function StructuralKit({ rooms }: StructuralKitProps) {
 
       {leftGround && (
         <ExteriorLadder
-          x={leftGround.x - leftGround.width * 0.5 + 0.52}
+          x={leftGround.x + leftGround.width * 0.5 + 0.08}
           bottomY={roomTopY(leftGround) + 0.08}
-          topY={roomTopY(leftGround) + 1.22}
-          z={exteriorZ}
+          topY={roomTopY(leftGround) + 1.26}
+          z={roomFrontZ(leftGround) + 0.08}
         />
       )}
 
-      {middle && centerGround && (
+      {rightGround && (
         <ExteriorLadder
-          x={middle.x + middle.width * 0.5 + 0.78}
-          bottomY={roomTopY(centerGround) + 0.08}
-          topY={roomTopY(centerGround) + 1.08}
-          z={roomFrontZ(middle) + 0.42}
+          x={rightGround.x - rightGround.width * 0.5 + 0.12}
+          bottomY={roomTopY(rightGround) + 0.08}
+          topY={roomTopY(rightGround) + 1.1}
+          z={roomFrontZ(rightGround) + 0.16}
         />
       )}
 
