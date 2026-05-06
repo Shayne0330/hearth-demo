@@ -34,6 +34,11 @@ export type BuildingLayout = {
   style: 'villa' | 'mansion';
 };
 
+const DESK_CUTAWAY_OFFSET = {
+  x: -0.22,
+  z: 0.24,
+} as const;
+
 function getDeskPosition(slot: number, total: number) {
   const positions = total <= 1
     ? [{ x: -0.42, z: 0.54 }]
@@ -47,7 +52,11 @@ function getDeskPosition(slot: number, total: number) {
           { x: 0.26, z: 0.58 },
           { x: -0.32, z: -0.24 },
         ];
-  return positions[slot] ?? positions[positions.length - 1];
+  const position = positions[slot] ?? positions[positions.length - 1];
+  return {
+    x: position.x + DESK_CUTAWAY_OFFSET.x,
+    z: position.z + DESK_CUTAWAY_OFFSET.z,
+  };
 }
 
 function getMassingSlots(count: number) {
