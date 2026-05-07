@@ -6,6 +6,8 @@ Hearth 是一个面向多项目、多 Session、多 Agent 工作流的 3D 记忆
 
 ![Hearth 3D memory palace](public/assets/readme-hearth.jpg)
 
+![Hearth collapsed floating icon](public/assets/readme-hearth-collapsed.jpg)
+
 ## 核心想法
 
 当一个人同时使用多个 IDE、多个 AI Agent、多个项目和多个会话时，真正困难的不是“有没有信息”，而是“我怎么快速恢复注意力”。
@@ -140,7 +142,8 @@ src/
 ├── data/projects.ts              # 项目、Session、Agent 假数据
 └── types/hearthDesktop.d.ts      # Electron preload 类型
 
-public/assets/readme-hearth.jpg   # README 截图
+public/assets/readme-hearth.jpg             # README 展开态截图
+public/assets/readme-hearth-collapsed.jpg   # README 收起态截图
 ```
 
 ## 设计原则
